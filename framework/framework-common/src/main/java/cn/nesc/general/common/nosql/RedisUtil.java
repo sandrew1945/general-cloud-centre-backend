@@ -1,6 +1,7 @@
 package cn.nesc.general.common.nosql;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -67,6 +68,23 @@ public class RedisUtil
     public boolean exists(final String key)
     {
         return redisTemplate.hasKey(key);
+    }
+
+    /**
+     * @Author summer
+     * @Description 获取缓存中所有符合条件的key
+     * @Date 15:09 2023/2/23
+     * @Param prefix 如果想要过滤全部则使用null、空字符串或*
+     * @return java.util.Set<java.lang.String>
+     **/
+    public Set<String> getKeys(final String prefix)
+    {
+        String pattern = null;
+        if(!"*".equals(prefix))
+        {
+            pattern = prefix;
+        }
+        return redisTemplate.keys(StringUtils.isEmpty(pattern) ? "*" : pattern.concat("*"));
     }
 
     /**

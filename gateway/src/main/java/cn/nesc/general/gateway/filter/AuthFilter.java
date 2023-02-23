@@ -11,7 +11,7 @@
 
 package cn.nesc.general.gateway.filter;
 
-import cn.nesc.general.stub.authcenter.AuthCenterService;
+import cn.nesc.general.common.nosql.RedisUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -40,9 +40,8 @@ public class AuthFilter extends ZuulFilter
     @Value("${gateway.manager.whitelist}")
     private Set<String> whiteList;
 
-
     @Resource
-    private AuthCenterService authCenterService;
+    private RedisUtil redisUtil;
 
     /**
      * 过滤器的类型，它决定过滤器在请求的哪个生命周期中执行。
@@ -104,7 +103,7 @@ public class AuthFilter extends ZuulFilter
         {
             unAuthResponse(ctx, "您无权限访问系统, Token不能为空");
         }
-        boolean isValidate = authCenterService.validateToken(token);
+        boolean isValidate = redisUtil.exists(token);
         logger.debug("isValidate  ------->" + isValidate);
         if (!isValidate)
         {

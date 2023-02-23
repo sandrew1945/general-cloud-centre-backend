@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="applicationName" source="spring.application.name" />
+    <property name="LOG_PATH" value="./logs/gateway/"/>
+    <property name="MAX_HISTORY" value="10"/>
+    <property name="SIZE_CAP" value="10MB"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %green([${applicationName},%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-B3-ParentSpanId},%X{X-Span-Export}]) %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="SAVE-TO-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/gataway.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [${applicationName},%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-B3-ParentSpanId},%X{X-Span-Export}] [%thread] %-5level %logger{36}.%M - %msg%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/gataway_%d{dd-MM-yyyy}.log</fileNamePattern>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <!--<appender-ref ref="SAVE-TO-FILE" />-->
+    </root>
+
+    <logger name="cn.nesc.general" additivity="false" level="debug">
+        <appender-ref ref="STDOUT" />
+<!--        <appender-ref ref="SAVE-TO-FILE" />-->
+    </logger>
+    <logger name="com.sandrew.bury" additivity="false" level="debug">
+        <appender-ref ref="STDOUT" />
+<!--        <appender-ref ref="SAVE-TO-FILE" />-->
+    </logger>
+    <logger name="org.springframework" additivity="false" level="info">
+        <appender-ref ref="STDOUT" />
+<!--        <appender-ref ref="SAVE-TO-FILE" />-->
+    </logger>
+
+</configuration>
