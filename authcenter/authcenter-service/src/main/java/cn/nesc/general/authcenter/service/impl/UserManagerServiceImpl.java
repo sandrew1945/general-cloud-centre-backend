@@ -26,19 +26,22 @@
 package cn.nesc.general.authcenter.service.impl;
 
 
-import cn.nesc.general.authcenter.dao.CommonDAO;
-import cn.nesc.general.authcenter.dao.UserManagerDAO;
-import cn.nesc.general.authcenter.model.TmRolePO;
-import cn.nesc.general.authcenter.model.TmUserPO;
-import cn.nesc.general.authcenter.model.TrUserRolePO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
+import cn.nesc.general.authcenter.mapper.TmUserPOMapper;
+import cn.nesc.general.authcenter.mapper.TrUserRolePOMapper;
+import cn.nesc.general.authcenter.mapper.custom.UserManagerMapper;
+import cn.nesc.general.authcenter.model.*;
 import cn.nesc.general.authcenter.service.UserManagerService;
-import cn.nesc.general.core.result.JsonResult;
-import cn.nesc.general.common.dictionary.Constants;
+import cn.nesc.general.common.dictionary.Fixcode;
 import cn.nesc.general.common.encrypt.MD5Encrypt;
+import cn.nesc.general.common.utils.MagicOOO;
 import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.bean.PageResult;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.exception.TooManyResultsException;
-import com.sandrew.bury.bean.*;
+import cn.nesc.general.core.mybatis.PageQueryBuilder;
+import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheConfig;
@@ -64,18 +67,20 @@ public class UserManagerServiceImpl implements UserManagerService
 {
 
     @Resource
-    private UserManagerDAO userManagerDAO;
+    private UserManagerMapper userManagerMapper;
 
     @Resource
-    private CommonDAO commonDAO;
+    private TmUserPOMapper tmUserPOMapper;
 
+    @Resource
+    private TrUserRolePOMapper trUserRolePOMapper;
 
     @Override
-    public PageResult<AclUserBean> userManagerPageQuery(String userCode, String userName, Integer userStatus, int limit, int curPage) throws ServiceException
+    public PageResult<UserManagerBO> userManagerPageQuery(UserManagerDTO condition, int limit, int curPage) throws ServiceException
     {
         try
         {
-            return userManagerDAO.userManagerPageQuery(userCode, userName, userStatus, limit, curPage);
+            return PageQueryBuilder.pageQuery(userManagerMapper, "userManagerPageQuery", condition, curPage, limit);
         }
         catch (Exception e)
         {
@@ -84,35 +89,36 @@ public class UserManagerServiceImpl implements UserManagerService
     }
 
     @Override
-    public JsonResult createUserInfo(TmUserPO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException
+    public Boolean createUserInfo(UserManagerDTO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException
     {
-        JsonResult result = new JsonResult();
+        Boolean result = false;
         try
         {
             boolean isExits = false;
-            TmUserPO cond = new TmUserPO();
-            cond.setUserCode(user.getUserCode());
-            cond.setUserStatus(Constants.IF_TYPE_NO);
-            List<TmUserPO> list = commonDAO.select(cond);
+            TmUserPOExample example = new TmUserPOExample();
+            TmUserPOExample.Criteria criteria = example.createCriteria();
+            criteria.andUserCodeEqualTo(user.getUserCode());
+            criteria.andIsDeleteEqualTo(Fixcode.IF_TYPE_NO.getCode());
+            List<TmUserPO> list = tmUserPOMapper.selectByExample(example);
 
             isExits = (null != list && list.size() > 0) ? true : false;
             if (!isExits)
             {
-                user.setIsDelete(Constants.IF_TYPE_NO);
-                user.setCreateBy(aclUser.getUserId());
-                user.setCreateDate(new Date());
-                user.setPassword(MD5Encrypt.MD5Encode(user.getPassword()));
-                result.requestSuccess(commonDAO.insert(user));
-            }
-            else
-            {
-                result.requestFailure("用户已经存在");
+                TmUserPO insertUser = new TmUserPO();
+                MagicOOO.copyProperties(insertUser, user);
+                insertUser.setIsDelete(Fixcode.IF_TYPE_NO.getCode());
+                insertUser.setCreateBy(aclUser.getUserCode());
+                insertUser.setCreateDate(new Date());
+                insertUser.setPassword(MD5Encrypt.MD5Encode(user.getPassword()));
+                if (tmUserPOMapper.insertSelective(insertUser) > 0)
+                {
+                    result = true;
+                }
             }
             return result;
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             log.error(e.getMessage(), e);
             throw new ServiceException("创建用户失败", e);
         }
@@ -124,14 +130,12 @@ public class UserManagerServiceImpl implements UserManagerService
         try
         {
             JsonResult result = new JsonResult();
-            TmUserPO cond = new TmUserPO(userId);
-
-            TmUserPO value = new TmUserPO();
-            value.setIsDelete(Constants.IF_TYPE_YES);
-            value.setUpdateBy(aclUser.getUserId());
-            value.setUpdateDate(new Date());
-
-            int count = commonDAO.update(cond, value);
+            TmUserPO updateUser = new TmUserPO();
+            updateUser.setUserId(userId);
+            updateUser.setIsDelete(Fixcode.IF_TYPE_YES.getCode());
+            updateUser.setUpdateDate(new Date());
+            updateUser.setUpdateBy(aclUser.getUserCode());
+            int count = tmUserPOMapper.updateByPrimaryKeySelective(updateUser);
             if (count > 0)
             {
                 result.requestSuccess(true);
@@ -157,7 +161,7 @@ public class UserManagerServiceImpl implements UserManagerService
         try
         {
             log.debug("缓存中不存在用户信息,读取数据库...");
-            TmUserPO tmUserPO = commonDAO.selectById(new TmUserPO(userId));
+            TmUserPO tmUserPO = tmUserPOMapper.selectByPrimaryKey(userId);
             return tmUserPO;
         }
         catch (Exception e)
@@ -176,16 +180,16 @@ public class UserManagerServiceImpl implements UserManagerService
             {
                 return null;
             }
-            TmUserPO cond = new TmUserPO();
-            cond.setUserCode(userCode);
-            cond.setIsDelete(Constants.IF_TYPE_NO);
-            AbstractIntervalPack<Integer> userStatusPack = new AbstractIntervalPack<Integer>(Constants.STAFF_STATUS_JOB, Constants.STAFF_STATUS_RECUPERATE) {
-                public String toSql(String columnName) {
-                    return "( " + columnName + " = ? or " + columnName + " = ? )";
-                }
-            };
-            cond.setUserStatus(userStatusPack);
-            List<TmUserPO> users = commonDAO.select(cond);
+            TmUserPOExample example = new TmUserPOExample();
+            TmUserPOExample.Criteria criteria = example.createCriteria();
+            criteria.andUserCodeEqualTo(userCode);
+            criteria.andIsDeleteEqualTo(Fixcode.IF_TYPE_NO.getCode());
+            List<Integer> userStatus = new ArrayList<>();
+            userStatus.add(Fixcode.STAFF_STATUS_JOB.getCode());
+            userStatus.add(Fixcode.STAFF_STATUS_RECUPERATE.getCode());
+            criteria.andUserStatusIn(userStatus);
+            List<TmUserPO> users = tmUserPOMapper.selectByExample(example);
+
             if (null != users && users.size() == 1)
             {
                 return users.get(0);
@@ -217,24 +221,19 @@ public class UserManagerServiceImpl implements UserManagerService
         JsonResult result = new JsonResult();
         try
         {
-            TmUserPO cond = new TmUserPO(user.getUserId());
+            TmUserPO updateUser = user;
+            updateUser.setUpdateBy(aclUser.getUserCode());
+            updateUser.setUpdateDate(new Date());
 
-            user.setUpdateDate(new Date());
-            user.setUpdateBy(aclUser.getUserId());
             //如果用户没有填写密码选项，则密码不改变
             if (StringUtils.isNotEmpty(user.getPassword()))
             {
-                user.setPassword(MD5Encrypt.MD5Encode(user.getPassword()));
+                updateUser.setPassword(MD5Encrypt.MD5Encode(user.getPassword()));
             }
-            else
-            {
-                user.setPassword((Pack<String>) null);
-            }
-            return result.requestSuccess(commonDAO.update(cond, user));
+            return result.requestSuccess(tmUserPOMapper.updateByPrimaryKey(updateUser));
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             log.error(e.getMessage(), e);
             throw new ServiceException("编辑用户失败", e);
         }
@@ -245,7 +244,7 @@ public class UserManagerServiceImpl implements UserManagerService
     {
         try
         {
-            return userManagerDAO.queryRelationRole(userId);
+            return userManagerMapper.queryRelationRole(userId);
         }
         catch (Exception e)
         {
@@ -260,10 +259,11 @@ public class UserManagerServiceImpl implements UserManagerService
         try
         {
             JsonResult result = new JsonResult();
-            TrUserRolePO userRole = new TrUserRolePO();
-            userRole.setUserId(userId);
-            userRole.setRoleId(roleId);
-            int count = commonDAO.delete(userRole);
+            TrUserRolePOExample example = new TrUserRolePOExample();
+            TrUserRolePOExample.Criteria criteria = example.createCriteria();
+            criteria.andUserIdEqualTo(userId);
+            criteria.andRoleIdEqualTo(roleId);
+            int count = trUserRolePOMapper.deleteByExample(example);
             if (count > 0)
             {
                 result.requestSuccess(true);
@@ -286,7 +286,8 @@ public class UserManagerServiceImpl implements UserManagerService
     {
         try
         {
-            List<TmRolePO> roles = userManagerDAO.getRoleExistOwn(aclUser.getUserId(), aclUser.getRoleName());
+
+            List<TmRolePO> roles = userManagerMapper.getRoleExistOwn(aclUser);
             return roles;
         }
         catch (Exception e)
@@ -309,11 +310,10 @@ public class UserManagerServiceImpl implements UserManagerService
                 TrUserRolePO userRole = new TrUserRolePO();
                 userRole.setUserId(userId);
                 userRole.setRoleId(new Integer(roleId));
-                userRole.setCreateBy(aclUser.getUserId());
+                userRole.setCreateBy(aclUser.getUserCode());
                 userRole.setCreateDate(new Date());
-                list.add(userRole);
+                trUserRolePOMapper.insertSelective(userRole);
             }
-            commonDAO.insert(list);
             JsonResult ajaxResult = new JsonResult();
             return ajaxResult.requestSuccess();
         }
@@ -326,44 +326,17 @@ public class UserManagerServiceImpl implements UserManagerService
     }
 
     @Override
-    public JsonResult updateClearAvatar(Integer userId, AclUserBean loginUser) throws ServiceException
-    {
-        try
-        {
-            TmUserPO cond = new TmUserPO(userId);
-
-            TmUserPO value = new TmUserPO();
-            value.setAvatar(new EqualPack<String>(null));
-            value.setUpdateBy(loginUser.getUserId());
-            value.setUpdateDate(new Date());
-            int count = commonDAO.update(cond, value);
-            JsonResult ajaxResult = new JsonResult();
-            if (count > 0)
-            {
-                return ajaxResult.requestSuccess();
-            }
-            else
-            {
-                return ajaxResult.requestFailure("用户保存失败");
-            }
-        }
-        catch (Exception e)
-        {
-            log.error(e.getMessage(), e);
-            throw new ServiceException("用户保存失败", e);
-        }
-    }
-
-    @Override
     public JsonResult getAvailableUserList() throws ServiceException
     {
         JsonResult result = new JsonResult();
         try
         {
-            TmUserPO cond = new TmUserPO();
-            cond.setIsDelete(Constants.IF_TYPE_NO);
-            cond.setUserStatus(Constants.STATUS_ENABLE);
-            List<TmUserPO> list = commonDAO.select(cond);
+            TmUserPOExample example = new TmUserPOExample();
+            TmUserPOExample.Criteria criteria = example.createCriteria();
+            criteria.andIsDeleteEqualTo(Fixcode.IF_TYPE_NO.getCode());
+            criteria.andUserStatusNotEqualTo(Fixcode.STAFF_STATUS_DIMISSION.getCode());
+            List<TmUserPO> list = tmUserPOMapper.selectByExample(example);
+
             if (null != list && list.size() > 0)
             {
                 result.requestSuccess(list);
@@ -388,7 +361,10 @@ public class UserManagerServiceImpl implements UserManagerService
         try
         {
             // 验证原始密码是否正确
-            TmUserPO userPO = commonDAO.selectById(new TmUserPO(userId));
+
+
+
+            TmUserPO userPO = tmUserPOMapper.selectByPrimaryKey(userId);
             if (null != userPO && !MD5Encrypt.MD5Encode(originPwd).equals(userPO.getPassword()))
             {
                 result.requestFailure("输入的密码不正确");
@@ -396,13 +372,12 @@ public class UserManagerServiceImpl implements UserManagerService
             else
             {
                 // 更新密码
-                TmUserPO cond = new TmUserPO(userId);
-
-                userPO = new TmUserPO();
-                userPO.setPassword(MD5Encrypt.MD5Encode(newPwd));
-                userPO.setUpdateBy(loginUser.getUserId());
-                userPO.setUpdateDate(new Date());
-                int count = commonDAO.update(cond, userPO);
+                TmUserPO updateUser = new TmUserPO();
+                updateUser.setUserId(userId);
+                updateUser.setPassword(MD5Encrypt.MD5Encode(newPwd));
+                updateUser.setUpdateBy(loginUser.getUserCode());
+                updateUser.setUpdateDate(new Date());
+                int count = tmUserPOMapper.updateByPrimaryKeySelective(updateUser);
                 if (count > 0)
                 {
                     result.requestSuccess(count);
@@ -426,10 +401,12 @@ public class UserManagerServiceImpl implements UserManagerService
     {
         try
         {
-            TmUserPO cond = new TmUserPO();
-            cond.setUserCode(userCode);
-            cond.setIsDelete(Constants.IF_TYPE_NO);
-            List<TmUserPO> userList = commonDAO.select(cond);
+            TmUserPOExample example = new TmUserPOExample();
+            TmUserPOExample.Criteria criteria = example.createCriteria();
+            criteria.andUserCodeEqualTo(userCode);
+            criteria.andIsDeleteEqualTo(Fixcode.IF_TYPE_NO.getCode());
+            criteria.andUserStatusNotEqualTo(Fixcode.STAFF_STATUS_DIMISSION.getCode());
+            List<TmUserPO> userList = tmUserPOMapper.selectByExample(example);
             return userList.size() > 0 ? false : true;
         }
         catch (Exception e)

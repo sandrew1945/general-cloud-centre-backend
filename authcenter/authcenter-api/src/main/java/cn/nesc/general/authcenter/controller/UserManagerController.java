@@ -1,14 +1,18 @@
 package cn.nesc.general.authcenter.controller;
 
 
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerConvertor;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
+import cn.nesc.general.authcenter.bean.usermanager.UserPageQueryVO;
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.UserManagerService;
 import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.bean.PageResult;
 import cn.nesc.general.core.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.result.JsonResult;
-import com.sandrew.bury.bean.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,18 +26,26 @@ public class UserManagerController extends BaseController
     @Resource
     private UserManagerService userManagerService;
 
+    @Resource
+    private UserManagerConvertor userManagerConvertor;
+
     @PostMapping(value = "/userManagerPageQuery")
     public
-    @ResponseBody
-    PageResult<AclUserBean> userManagerPageQuery(@RequestParam(required = false) String userCode, @RequestParam(required = false) String userName, @RequestParam(required = false) Integer userStatus, int limit, int curPage) throws JsonException
+    @ResponseBody PageResult<UserPageQueryVO> userManagerPageQuery(@RequestParam(required = false) String userCode, @RequestParam(required = false) String userName, @RequestParam(required = false) Integer userStatus, int limit, int curPage) throws JsonException
     {
         try
         {
-            TmUserPO condition = new TmUserPO();
+            UserManagerDTO condition = new UserManagerDTO();
             condition.setUserCode(userCode);
             condition.setUserName(userName);
             condition.setUserStatus(userStatus);
-            return userManagerService.userManagerPageQuery(userCode, userName, userStatus, limit, curPage);
+            // BO转VO
+            PageResult<UserManagerBO> pageResult = userManagerService.userManagerPageQuery(condition, limit, curPage);
+
+            PageResult<UserPageQueryVO> result = pageResult.convert(originPageResult -> {
+                return userManagerConvertor.toUserPageQueryVO(originPageResult);
+            });
+            return result;
         }
         catch (Exception e)
         {
@@ -61,7 +73,7 @@ public class UserManagerController extends BaseController
     @PostMapping(value = "/createUserInfo")
     public
     @ResponseBody
-    JsonResult createUserInfo(TmUserPO user) throws JsonException
+    Boolean createUserInfo(UserManagerDTO user) throws JsonException
     {
         try
         {

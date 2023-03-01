@@ -1,11 +1,13 @@
 package cn.nesc.general.common.utils;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -15,6 +17,27 @@ import java.lang.reflect.Method;
  */
 public class ObjectUtils extends org.apache.commons.lang3.ObjectUtils
 {
+
+	/**
+	 *  属性复制
+	 * @param target
+	 * @param origin
+	 */
+	public static void copyProperties(Object target , Object origin)
+	{
+		try
+		{
+			BeanUtils.copyProperties(target, origin);
+		}
+		catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+		}
+		catch (InvocationTargetException e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 注解到对象复制，只复制能匹配上的方法。

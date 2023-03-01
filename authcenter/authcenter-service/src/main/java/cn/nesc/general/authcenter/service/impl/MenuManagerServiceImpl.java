@@ -1,11 +1,12 @@
 package cn.nesc.general.authcenter.service.impl;
 
-import cn.nesc.general.authcenter.dao.CommonDAO;
-import cn.nesc.general.authcenter.dao.MenuManagerDAO;
-import cn.nesc.general.authcenter.model.TmFunctionPO;
+import cn.nesc.general.authcenter.mapper.TmMenuPOMapper;
+import cn.nesc.general.authcenter.mapper.custom.MenuManagerMapper;
+import cn.nesc.general.authcenter.model.TmMenuPO;
+import cn.nesc.general.authcenter.model.TmMenuPOExample;
 import cn.nesc.general.authcenter.service.MenuManagerService;
 import cn.nesc.general.authcenter.service.util.TreeNode;
-import cn.nesc.general.common.dictionary.Constants;
+import cn.nesc.general.common.dictionary.Fixcode;
 import cn.nesc.general.core.bean.AclUserBean;
 import cn.nesc.general.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,29 +24,29 @@ import java.util.stream.Collectors;
 public class MenuManagerServiceImpl implements MenuManagerService
 {
     @Resource
-    private MenuManagerDAO menuManagerDAO;
+    private MenuManagerMapper menuManagerMapper;
 
     @Resource
-    private CommonDAO commonDAO;
+    private TmMenuPOMapper tmMenuPOMapper;
+
 
     @Override
     public List<TreeNode> getMenuTree() throws ServiceException
     {
         try
         {
-            //            List<MenuNode>
-            List<TmFunctionPO> list = menuManagerDAO.getMenuList();
+            List<TmMenuPO> list = menuManagerMapper.getMenuList();
             // 遍历全部菜单，将节点转换为MenuNode,并将子节点放入父节点的children中
             Map<Integer, TreeNode> cache = new HashMap<>();
             List<TreeNode> menuNodeList = list.stream().map(function -> {
                 TreeNode node = new TreeNode();
                 Map<String, String> meta = new HashMap<>();
-                node.setFunctionId(function.getFunctionId());
+                node.setFunctionId(function.getMenuId());
                 node.setPath(function.getPath());
                 node.setName(function.getTitle());
                 node.setIcon(function.getIcon());
                 node.setFuncOrder(function.getFuncOrder());
-                cache.put(function.getFunctionId(), node);
+                cache.put(function.getMenuId(), node);
                 if (cache.containsKey(function.getFatherId()))
                 {
                     cache.get(function.getFatherId()).addChildren(node);
@@ -67,17 +68,16 @@ public class MenuManagerServiceImpl implements MenuManagerService
     {
         try
         {
-            TmFunctionPO cond = new TmFunctionPO();
-            cond.setFunctionId(treeNode.getFunctionId());
+            TmMenuPO updateMenu = new TmMenuPO();
+            updateMenu.setMenuId(treeNode.getFunctionId());
 
-            TmFunctionPO value = new TmFunctionPO();
-            value.setPath(treeNode.getPath());
-            value.setTitle(treeNode.getName());
-            value.setIcon(treeNode.getIcon());
-            value.setFuncOrder(treeNode.getFuncOrder());
-            value.setUpdateBy(loginUser.getUserId());
-            value.setUpdateDate(new Date());
-            return commonDAO.update(cond, value);
+            updateMenu.setPath(treeNode.getPath());
+            updateMenu.setTitle(treeNode.getName());
+            updateMenu.setIcon(treeNode.getIcon());
+            updateMenu.setFuncOrder(treeNode.getFuncOrder());
+            updateMenu.setUpdateBy(loginUser.getUserCode());
+            updateMenu.setUpdateDate(new Date());
+            return tmMenuPOMapper.updateByPrimaryKeySelective(updateMenu);
         }
         catch (Exception e)
         {
@@ -91,25 +91,25 @@ public class MenuManagerServiceImpl implements MenuManagerService
     {
         try
         {
-            TmFunctionPO cond = new TmFunctionPO();
-            cond.setFunctionId(functionId);
-
-            TmFunctionPO value = new TmFunctionPO();
-            value.setIsDelete(Constants.IF_TYPE_YES);
-            value.setUpdateBy(loginUser.getUserId());
-            value.setUpdateDate(new Date());
-            int count = commonDAO.update(cond, value);
+            TmMenuPO deleteMenu = new TmMenuPO();
+            deleteMenu.setMenuId(functionId);
+            deleteMenu.setIsDelete(Fixcode.IF_TYPE_YES.getCode());
+            deleteMenu.setUpdateBy(loginUser.getUserCode());
+            deleteMenu.setUpdateDate(new Date());
+            int count = tmMenuPOMapper.updateByPrimaryKeySelective(deleteMenu);
             if (count > 0)
             {
                 // 删除该菜单下的子菜单
-                TmFunctionPO childCond = new TmFunctionPO();
-                childCond.setFatherId(functionId);
-                childCond.setIsDelete(Constants.IF_TYPE_NO);
-                List<TmFunctionPO> children = commonDAO.select(childCond);
+                TmMenuPOExample example = new TmMenuPOExample();
+                TmMenuPOExample.Criteria criteria = example.createCriteria();
+                criteria.andFatherIdEqualTo(functionId);
+                criteria.andIsDeleteEqualTo(Fixcode.IF_TYPE_NO.getCode());
+                List<TmMenuPO> children = tmMenuPOMapper.selectByExample(example);
+
                 children.stream().forEach(child -> {
                     try
                     {
-                        deleteMenuById(child.getFunctionId(), loginUser);
+                        deleteMenuById(child.getMenuId(), loginUser);
                     }
                     catch (ServiceException e)
                     {
@@ -131,16 +131,16 @@ public class MenuManagerServiceImpl implements MenuManagerService
     {
         try
         {
-            TmFunctionPO function = new TmFunctionPO();
-            function.setPath(treeNode.getPath());
-            function.setTitle(treeNode.getName());
-            function.setIcon(treeNode.getIcon());
-            function.setFuncOrder(treeNode.getFuncOrder());
-            function.setFatherId(fatherId);
-            function.setIsDelete(Constants.IF_TYPE_NO);
-            function.setCreateBy(loginUser.getUserId());
-            function.setCreateDate(new Date());
-            return commonDAO.insert(function);
+            TmMenuPO menu = new TmMenuPO();
+            menu.setPath(treeNode.getPath());
+            menu.setTitle(treeNode.getName());
+            menu.setIcon(treeNode.getIcon());
+            menu.setFuncOrder(treeNode.getFuncOrder());
+            menu.setFatherId(fatherId);
+            menu.setIsDelete(Fixcode.IF_TYPE_NO.getCode());
+            menu.setCreateBy(loginUser.getUserCode());
+            menu.setCreateDate(new Date());
+            return tmMenuPOMapper.insertSelective(menu);
         }
         catch (Exception e)
         {

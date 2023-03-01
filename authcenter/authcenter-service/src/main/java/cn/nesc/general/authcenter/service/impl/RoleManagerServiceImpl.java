@@ -31,25 +31,27 @@ package cn.nesc.general.authcenter.service.impl;
 
 
 import cn.nesc.general.authcenter.bean.RoleBean;
-import cn.nesc.general.authcenter.dao.CommonDAO;
-import cn.nesc.general.authcenter.dao.RoleManagerDAO;
-import cn.nesc.general.authcenter.model.TmFuncFrontPO;
-import cn.nesc.general.authcenter.model.TmFunctionPO;
-import cn.nesc.general.authcenter.model.TmRolePO;
-import cn.nesc.general.authcenter.model.TrRoleFuncFrontPO;
+import cn.nesc.general.authcenter.mapper.TmMenuPOMapper;
+import cn.nesc.general.authcenter.mapper.TmRolePOMapper;
+import cn.nesc.general.authcenter.mapper.TrRoleFuncFrontPOMapper;
+import cn.nesc.general.authcenter.mapper.custom.RoleManagerMapper;
+import cn.nesc.general.authcenter.model.*;
 import cn.nesc.general.authcenter.service.RoleManagerService;
-import cn.nesc.general.authcenter.service.util.MenuNode;
-import cn.nesc.general.core.result.JsonResult;
 import cn.nesc.general.common.dictionary.Constants;
+import cn.nesc.general.common.dictionary.Fixcode;
 import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.bean.PageResult;
 import cn.nesc.general.core.exception.DAOException;
 import cn.nesc.general.core.exception.ServiceException;
-import com.sandrew.bury.bean.PageResult;
+import cn.nesc.general.core.mybatis.PageQueryBuilder;
+import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -62,20 +64,29 @@ import java.util.*;
 @Slf4j
 public class RoleManagerServiceImpl implements RoleManagerService
 {
+    @Resource
+    private TmRolePOMapper tmRolePOMapper;
 
     @Resource
-    private RoleManagerDAO roleManagerDAO;
+    private RoleManagerMapper roleManagerMapper;
 
     @Resource
-    private CommonDAO commonDAO;
+    private TrRoleFuncFrontPOMapper trRoleFuncFrontPOMapper;
+
+    @Resource
+    private TmMenuPOMapper tmMenuPOMapper;
+
 
     @Override
     public List<TmRolePO> getRoleList() throws ServiceException
     {
         try
         {
-            TmRolePO cond = new TmRolePO();
-            List<TmRolePO> roleList = commonDAO.select(cond);
+            TmRolePOExample example = new TmRolePOExample();
+            TmRolePOExample.Criteria criteria = example.createCriteria();
+            criteria.andIsDeleteEqualTo(Fixcode.IF_TYPE_NO.getCode());
+
+            List<TmRolePO> roleList = tmRolePOMapper.selectByExample(example);
             log.debug("roleList : " + roleList);
             return roleList;
         }
@@ -99,7 +110,7 @@ public class RoleManagerServiceImpl implements RoleManagerService
     {
         try
         {
-            return roleManagerDAO.roleManagerPageQuery(condition.getRoleCode(), condition.getRoleName(), condition.getRoleStatus(), limit, curPage);
+            return PageQueryBuilder.pageQuery(roleManagerMapper, "roleManagerPageQuery", condition, curPage, limit);
         }
         catch (Exception e)
         {
@@ -123,17 +134,19 @@ public class RoleManagerServiceImpl implements RoleManagerService
         {
             boolean isExits = false;
             // 验证用户代码是否存在
-            TmRolePO cond = new TmRolePO();
-            cond.setRoleCode(role.getRoleCode());
-            cond.setIsDelete(Constants.IF_TYPE_NO);
-            List<TmRolePO> list = commonDAO.select(cond);
+            TmRolePOExample example = new TmRolePOExample();
+            TmRolePOExample.Criteria criteria = example.createCriteria();
+            criteria.andRoleCodeEqualTo(role.getRoleCode());
+            criteria.andIsDeleteEqualTo(Fixcode.IF_TYPE_NO.getCode());
+            List<TmRolePO> list = tmRolePOMapper.selectByExample(example);
+
             isExits = (null != list && list.size() > 0) ? true : false;
             if (!isExits)
             {
                 role.setIsDelete(Constants.IF_TYPE_NO);
-                role.setCreateBy(aclUser.getUserId());
+                role.setCreateBy(aclUser.getUserCode());
                 role.setCreateDate(new Date());
-                result.requestSuccess(commonDAO.insert(role));
+                result.requestSuccess(tmRolePOMapper.insertSelective(role));
             }
             else
             {
@@ -162,7 +175,7 @@ public class RoleManagerServiceImpl implements RoleManagerService
 
         try
         {
-            TmRolePO tmRolePO = commonDAO.selectById(new TmRolePO(roleId));
+            TmRolePO tmRolePO = tmRolePOMapper.selectByPrimaryKey(roleId);
             return tmRolePO;
         }
         catch (DAOException e)
@@ -187,17 +200,13 @@ public class RoleManagerServiceImpl implements RoleManagerService
         JsonResult result = new JsonResult();
         try
         {
-            TmRolePO cond = new TmRolePO(role.getRoleId());
-
             role.setUpdateDate(new Date());
-            role.setUpdateBy(aclUser.getUserId());
-            commonDAO.update(cond, role);
-            result.requestSuccess();
+            role.setUpdateBy(aclUser.getUserCode());
+            result.requestSuccess(tmRolePOMapper.updateByPrimaryKeySelective(role));
             return result;
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             log.error(e.getMessage(), e);
             throw new ServiceException("编辑角色失败", e);
         }
@@ -218,13 +227,13 @@ public class RoleManagerServiceImpl implements RoleManagerService
         try
         {
             JsonResult result = new JsonResult();
-            TmRolePO cond = new TmRolePO(roleId);
 
-            TmRolePO value = new TmRolePO();
-            value.setIsDelete(Constants.IF_TYPE_YES);
-            value.setUpdateBy(aclUser.getUserId());
-            value.setUpdateDate(new Date());
-            int count = commonDAO.update(cond, value);
+            TmRolePO deleteRole = new TmRolePO();
+            deleteRole.setRoleId(roleId);
+            deleteRole.setIsDelete(Fixcode.IF_TYPE_YES.getCode());
+            deleteRole.setUpdateBy(aclUser.getUserCode());
+            deleteRole.setUpdateDate(new Date());
+            int count = tmRolePOMapper.updateByPrimaryKeySelective(deleteRole);
 
             if (count > 0)
             {
@@ -246,38 +255,11 @@ public class RoleManagerServiceImpl implements RoleManagerService
     /**
      *  保存权限
      * @param roleId
-     * @param nodes
+     * @param functionIds
      * @param loginUser
      * @return
      * @throws ServiceException
      */
-    @Override
-    public JsonResult savePermission(Integer roleId, List<MenuNode> nodes, AclUserBean loginUser) throws ServiceException
-    {
-        JsonResult result = new JsonResult();
-        try
-        {
-            // 处理选择的菜单
-            Set<MenuNode> premissionSet = new LinkedHashSet<>();
-            handleMenuNode(premissionSet, nodes);
-            // 删除该角色关联的菜单
-            TmFuncFrontPO deleteCond = new TmFuncFrontPO();
-            deleteCond.setRoleId(roleId);
-            commonDAO.delete(deleteCond);
-            // 重新添加该角色菜单
-            for (MenuNode menuNode : premissionSet)
-            {
-                System.out.println("Path : " + menuNode.getPath() + "     Name : " + menuNode.getName() + "   children : " + menuNode.getChildren().size());
-                insertMenu(roleId, null, menuNode, loginUser);
-            }
-            return result.requestSuccess(true);
-        }
-        catch (Exception e)
-        {
-            log.error(e.getMessage(), e);
-            throw new ServiceException("添加功能失败", e);
-        }
-    }
 
     @Override
     public JsonResult saveSelectedFunc(Integer roleId, List<Integer> functionIds, AclUserBean loginUser) throws ServiceException
@@ -287,9 +269,10 @@ public class RoleManagerServiceImpl implements RoleManagerService
         {
             List<Integer> insertedIds = new ArrayList<>();
             // 先清空该角色下全部功能
-            TrRoleFuncFrontPO cond = new TrRoleFuncFrontPO();
-            cond.setRoleId(roleId);
-            commonDAO.delete(cond);
+            TrRoleFuncFrontPOExample example = new TrRoleFuncFrontPOExample();
+            TrRoleFuncFrontPOExample.Criteria criteria = example.createCriteria();
+            criteria.andRoleIdEqualTo(roleId);
+            trRoleFuncFrontPOMapper.deleteByExample(example);
 
             // 重新生成角色功能关系
             functionIds.stream().forEach(functionId -> {
@@ -309,25 +292,24 @@ public class RoleManagerServiceImpl implements RoleManagerService
         try
         {
             // 插入角色下function id, 如果该function有父function,那么先插入父function，最后记录插入过的functionId
-
             if (createdFunction.contains(functionId))
             {
                 // 已经存在，不需要保存
                 return 0;
             }
             // 判断是否有父节点
-            TmFunctionPO function = commonDAO.selectById(new TmFunctionPO(functionId));
-            if (null != function.getFatherId())
+            TmMenuPO menu = tmMenuPOMapper.selectByPrimaryKey(functionId);
+            if (null != menu.getFatherId())
             {
-                createRoleFunction(roleId, function.getFatherId(), createdFunction, loginUser);
+                createRoleFunction(roleId, menu.getFatherId(), createdFunction, loginUser);
             }
             // 将该节点关联到该角色下
-            TrRoleFuncFrontPO roleFuncFront = new TrRoleFuncFrontPO();
-            roleFuncFront.setRoleId(roleId);
-            roleFuncFront.setFunctionId(functionId);
-            roleFuncFront.setCreateBy(loginUser.getUserId());
-            roleFuncFront.setCreateDate(new Date());
-            int count = commonDAO.insert(roleFuncFront);
+            TrRoleFuncFrontPO insertRoleFunc = new TrRoleFuncFrontPO();
+            insertRoleFunc.setRoleId(roleId);
+            insertRoleFunc.setMenuId(functionId);
+            insertRoleFunc.setCreateBy(loginUser.getUserCode());
+            insertRoleFunc.setCreateDate(new Date());
+            int count = trRoleFuncFrontPOMapper.insertSelective(insertRoleFunc);
             createdFunction.add(functionId);
             return count;
         }
@@ -344,12 +326,13 @@ public class RoleManagerServiceImpl implements RoleManagerService
         JsonResult result = new JsonResult();
         try
         {
-            TrRoleFuncFrontPO cond = new TrRoleFuncFrontPO();
-            cond.setRoleId(roleId);
-            List<TrRoleFuncFrontPO> roleFuncFrontList = commonDAO.select(cond);
+            TrRoleFuncFrontPOExample example = new TrRoleFuncFrontPOExample();
+            TrRoleFuncFrontPOExample.Criteria criteria = example.createCriteria();
+            criteria.andRoleIdEqualTo(roleId);
+            List<TrRoleFuncFrontPO> roleFuncFrontList = trRoleFuncFrontPOMapper.selectByExample(example);
             List<Integer> checkedPermission = new ArrayList<>();
             roleFuncFrontList.stream().forEach(el -> {
-                checkedPermission.add(el.getFunctionId());
+                checkedPermission.add(el.getMenuId());
             });
             return result.requestSuccess(checkedPermission);
         }
@@ -357,64 +340,6 @@ public class RoleManagerServiceImpl implements RoleManagerService
         {
             log.error(e.getMessage(), e);
             throw new ServiceException("获取已选菜单失败", e);
-        }
-    }
-
-    /**
-     *  菜单节点处理
-     * @param set
-     * @param nodes
-     */
-    private void handleMenuNode(Set<MenuNode> set, List<MenuNode> nodes)
-    {
-        for (MenuNode node : nodes)
-        {
-            if (!set.contains(node))
-            {
-                set.add(node);
-            }
-            else
-            {
-                set.remove(node);
-            }
-            if (null != node.getChildren() & node.getChildren().size() > 0)
-            {
-                handleMenuNode(set, node.getChildren());
-            }
-        }
-    }
-
-    private void insertMenu(Integer roleId, TmFuncFrontPO father, MenuNode node, AclUserBean loginUser) throws ServiceException
-    {
-        try
-        {
-            TmFuncFrontPO function = new TmFuncFrontPO();
-            function.setRoleId(roleId);
-            function.setPath(node.getPath());
-            function.setName(node.getName());
-            function.setTitle(node.getMeta().get("title"));
-            function.setFile(node.getMeta().get("file"));
-            function.setIcon(node.getMeta().get("icon"));
-            function.setRedirect(node.getRedirect());
-            if (null != father)
-            {
-                function.setFatherId(father.getFuncId());
-            }
-            function.setCreateBy(loginUser.getUserId());
-            function.setCreateDate(new Date());
-            commonDAO.insert(function);
-            if (null != node.getChildren() && node.getChildren().size() > 0)
-            {
-                for (MenuNode child : node.getChildren())
-                {
-                    insertMenu(roleId, function, child, loginUser);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            log.error(e.getMessage(), e);
-            throw new ServiceException("维护功能失败", e);
         }
     }
 }

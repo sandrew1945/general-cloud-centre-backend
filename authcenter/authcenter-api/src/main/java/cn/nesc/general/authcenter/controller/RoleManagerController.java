@@ -23,15 +23,14 @@
 package cn.nesc.general.authcenter.controller;
 
 import cn.nesc.general.authcenter.bean.FunctionsParam;
-import cn.nesc.general.authcenter.bean.PermissionParam;
 import cn.nesc.general.authcenter.bean.RoleBean;
 import cn.nesc.general.authcenter.model.TmRolePO;
 import cn.nesc.general.authcenter.service.RoleManagerService;
+import cn.nesc.general.core.bean.PageResult;
 import cn.nesc.general.core.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.result.JsonResult;
-import com.sandrew.bury.bean.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -132,20 +131,6 @@ public class RoleManagerController extends BaseController
 		{
 			log.error(e.getMessage(), e);
 			throw new JsonException(e.getMessage(), e);
-		}
-	}
-
-	@PostMapping("savePermission")
-	public @ResponseBody JsonResult savePermission(@RequestBody PermissionParam parameter) throws JsonException
-	{
-		try
-		{
-			return roleManagerService.savePermission(parameter.getRoleId(), parameter.getNode(), getLoginUser());
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage(), e);
-			throw new JsonException("保存权限失败", e);
 		}
 	}
 

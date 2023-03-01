@@ -3,11 +3,10 @@ package cn.nesc.general.authcenter.service;
 
 import cn.nesc.general.authcenter.bean.RoleBean;
 import cn.nesc.general.authcenter.model.TmRolePO;
-import cn.nesc.general.authcenter.service.util.MenuNode;
-import cn.nesc.general.core.result.JsonResult;
 import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.bean.PageResult;
 import cn.nesc.general.core.exception.ServiceException;
-import com.sandrew.bury.bean.PageResult;
+import cn.nesc.general.core.result.JsonResult;
 
 import java.util.List;
 
@@ -78,17 +77,6 @@ public interface RoleManagerService
 	 * @throws ServiceException
 	 */
 	JsonResult deleteRole(Integer roleId, AclUserBean aclUser) throws ServiceException;
-
-
-	/**
-	 *  保存权限
-	 * @param roleId
-	 * @param nodes
-	 * @param loginUser
-	 * @return
-	 * @throws ServiceException
-     */
-	JsonResult savePermission(Integer roleId, List<MenuNode> nodes, AclUserBean loginUser) throws ServiceException;
 
 	/**
 	 *  保存角色下的菜单(quasar)

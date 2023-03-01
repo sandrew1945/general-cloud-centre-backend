@@ -28,7 +28,7 @@ package cn.nesc.general.core.exception;
  * CreateDate  : 2009-11-2
  * @version    :
  */
-public class ActionException extends Exception
+public class ActionException extends BaseException
 {
 
 	/**

@@ -18,6 +18,7 @@ public class JsonResult
     public JsonResult requestSuccess(Object data)
     {
         this.result = true;
+        this.msg = "";
         this.data = data;
         return this;
     }

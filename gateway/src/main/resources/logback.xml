@@ -30,12 +30,7 @@
         <appender-ref ref="STDOUT" />
         <!--<appender-ref ref="SAVE-TO-FILE" />-->
     </root>
-
-    <logger name="cn.nesc.general" additivity="false" level="debug">
-        <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="SAVE-TO-FILE" />-->
-    </logger>
-    <logger name="com.sandrew.bury" additivity="false" level="debug">
+    <logger name="cn.nesc.general" additivity="false" level="info">
         <appender-ref ref="STDOUT" />
 <!--        <appender-ref ref="SAVE-TO-FILE" />-->
     </logger>

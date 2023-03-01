@@ -28,7 +28,7 @@ package cn.nesc.general.core.exception;
  * CreateDate  : 2009-11-2
  * @version    :
  */
-public class TooManyResultsException extends Exception
+public class TooManyResultsException extends BaseException
 {
 
 	/**

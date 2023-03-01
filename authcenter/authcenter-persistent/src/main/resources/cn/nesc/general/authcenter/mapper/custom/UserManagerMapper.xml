@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.nesc.general.authcenter.mapper.custom.UserManagerMapper" >
+	<resultMap id="BaseResultMap" type="cn.nesc.general.authcenter.model.TmUserPO" >
+		<id column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="user_code" jdbcType="VARCHAR" property="userCode" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="sex" jdbcType="INTEGER" property="sex" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="birthday" jdbcType="DATE" property="birthday" />
+		<result column="avatar" jdbcType="VARCHAR" property="avatar" />
+		<result column="user_type" jdbcType="INTEGER" property="userType" />
+		<result column="user_status" jdbcType="INTEGER" property="userStatus" />
+		<result column="is_delete" jdbcType="INTEGER" property="isDelete" />
+		<result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="create_by" jdbcType="VARCHAR" property="createBy" />
+		<result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+		<result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+	</resultMap>
+	
+	
+    <!--  分页查询List -->
+    <select id="userManagerPageQuery" resultType="cn.nesc.general.authcenter.bean.usermanager.UserManagerBO" parameterType="pager">
+	    SELECT
+				tu.user_id,
+				tu.user_code,
+				tu.user_name,
+				tu.sex,
+				tu.user_status,
+				tu.phone,
+				tu.mobile,
+				tu.email,
+				tr.role_code,
+				group_concat(tr.role_name) AS role_name
+			FROM
+				tm_user tu
+			LEFT JOIN tr_user_role tur ON tu.user_id = tur.user_id
+			LEFT JOIN (
+					SELECT
+						tm_role.role_id,
+						tm_role.role_code,
+						tm_role.role_name
+					FROM
+						tm_role
+					WHERE tm_role.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
+					AND   tm_role.role_status = ${@cn.nesc.general.common.dictionary.Fixcode@STATUS_ENABLE.getCode()}
+				) tr ON tr.role_id = tur.role_id
+			WHERE
+				1 = 1
+		<if test="condition.userCode != '' and condition.userCode != null">
+            AND user_code LIKE CONCAT('%',#{condition.userCode},'%')
+        </if>
+        <if test="condition.userName != '' and condition.userName != null">
+        	AND user_name LIKE CONCAT('%',#{condition.userName},'%')
+        </if>
+        <if test="condition.userStatus != null">
+        	AND user_status = #{condition.userStatus}
+        </if>
+		AND tu.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
+		GROUP BY user_code,is_delete   </select>
+    
+    
+    <select id="queryRelationRole" resultType="cn.nesc.general.authcenter.model.TmRolePO" parameterType="int">
+		select tr.* from tm_role tr JOIN tr_user_role tur ON tr.role_id = tur.role_id WHERE tur.user_id = #{_parameter}
+    </select>
+    
+    <!-- 查询全部未关联角色 -->
+    <select id="getRoleExistOwn" resultType="cn.nesc.general.authcenter.model.TmRolePO" parameterType="cn.nesc.general.core.bean.AclUserBean">
+		select
+			tr.role_id,
+			tr.role_code,
+			tr.role_name,
+			tr.role_type,
+			tr.role_status
+		from
+			tm_role tr
+		where
+			tr.role_status = ${@cn.nesc.general.common.dictionary.Fixcode@STATUS_ENABLE.getCode()}
+		and not exists (
+			select
+				1
+			from
+				tr_user_role tur
+			where
+				tr.role_id = tur.role_id
+			and tur.user_id = #{userId})
+			<if test="roleName != null and roleName != ''">
+			and tr.role_name like CONCAT('%',#{roleName},'%')
+			</if>
+    </select>
+
+	<!-- 清空照片 -->
+	<update id="updateClearAvatar" parameterType="java.util.Map">
+		update
+			tm_user tu 
+		set 
+			tu.avatar = null,
+			tu.update_date = #{updateDate, jdbcType=DATE},
+			tu.update_by = #{updateBy,  jdbcType=INTEGER}
+		where 
+			tu.user_id = #{userId, jdbcType=INTEGER}
+	</update>
+    
+</mapper>

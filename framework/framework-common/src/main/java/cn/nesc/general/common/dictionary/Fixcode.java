@@ -1,9 +1,11 @@
 package cn.nesc.general.common.dictionary;
 
+import cn.nesc.general.core.enums.BaseEnum;
+
 /**
  * Created by summer on 2018/7/3.
  */
-public enum Fixcode
+public enum Fixcode implements BaseEnum
 {
     STATUS_ENABLE(1001, 10011001, "有效"),
     STATUS_DISABLE(1001, 10011002, "无效"),
@@ -15,7 +17,7 @@ public enum Fixcode
     ACCESS_TYPE_LOGIN(1004, 10041001, "登录"),
     ACCESS_TYPE_LOGOUT(1004, 10041002, "登出"),
 
-
+    /*  员工状态  */
     STAFF_STATUS_JOB(2001, 20011001, "在职"),
     STAFF_STATUS_DIMISSION(2001, 20011002, "离职"),
     STAFF_STATUS_RETIRE(2001, 20011003, "退休"),
@@ -23,9 +25,9 @@ public enum Fixcode
 
 
 
-    private Integer type;       // 字典类别
-    private Integer fixcode;     // 字典码
-    private String desc;        // 描述
+    public Integer type;       // 字典类别
+    public Integer fixcode;     // 字典码
+    public String desc;        // 描述
     private Fixcode(Integer type, Integer fixcode, String desc)
     {
         this.type = type;
@@ -38,7 +40,7 @@ public enum Fixcode
         return type;
     }
 
-    public Integer getFixcode()
+    public Integer getCode()
     {
         return fixcode;
     }

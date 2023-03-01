@@ -1,10 +1,9 @@
 package cn.nesc.general.authcenter.bean;
 
-import com.sandrew.bury.bean.PO;
 import lombok.Data;
 
 @Data
-public class UserInfo extends PO
+public class UserInfo
 {
     private Integer userId;
 

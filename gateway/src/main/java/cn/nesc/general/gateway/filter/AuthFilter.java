@@ -26,6 +26,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
+import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.PRE_TYPE;
+
 /**
  * @ClassName AuthFilter
  * @Description
@@ -52,7 +54,7 @@ public class AuthFilter extends ZuulFilter
     @Override
     public String filterType()
     {
-        return "pre";
+        return PRE_TYPE;
     }
 
     /**

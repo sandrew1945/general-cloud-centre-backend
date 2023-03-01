@@ -3,6 +3,7 @@ package cn.nesc.general.authcenter.controller;
 
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.LoginService;
+import cn.nesc.general.core.bean.AclUserBean;
 import cn.nesc.general.core.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
@@ -30,16 +31,15 @@ public class LoginController extends BaseController
     private String custom;
 
     @PostMapping(value = "/login")
-    public JsonResult login(String userCode, String password) throws JsonException
+    public AclUserBean login(String userCode, String password) throws JsonException
     {
         log.debug("custom ----------->" + custom);
-        JsonResult result = new JsonResult();
         try
         {
             TmUserPO user = new TmUserPO();
             user.setUserCode(userCode);
             user.setPassword(password);
-            result = result.requestSuccess(loginService.login(user));
+            return loginService.login(user);
         }
         catch (Exception e)
         {
@@ -52,10 +52,9 @@ public class LoginController extends BaseController
             {
                 errorMsg = "用户登录失败";
             }
-            result.requestFailure(errorMsg);
             log.error(e.getMessage(), e);
+            throw new JsonException(errorMsg, e);
         }
-        return result;
     }
 
     @GetMapping(value = "/userInfo")

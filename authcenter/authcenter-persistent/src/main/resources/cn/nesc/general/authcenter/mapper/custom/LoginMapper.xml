@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.nesc.general.authcenter.mapper.custom.LoginMapper" >
+	<resultMap id="BaseResultMap" type="cn.nesc.general.authcenter.model.TmUserPO" >
+		<id column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="user_code" jdbcType="VARCHAR" property="userCode" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="sex" jdbcType="INTEGER" property="sex" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="birthday" jdbcType="DATE" property="birthday" />
+		<result column="avatar" jdbcType="VARCHAR" property="avatar" />
+		<result column="user_type" jdbcType="INTEGER" property="userType" />
+		<result column="user_status" jdbcType="INTEGER" property="userStatus" />
+		<result column="is_delete" jdbcType="INTEGER" property="isDelete" />
+		<result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="create_by" jdbcType="VARCHAR" property="createBy" />
+		<result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+		<result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+	</resultMap>
+	<resultMap id="RoleResultMap" type="cn.nesc.general.core.bean.AclUserBean" >
+		<result column="role_id" property="roleId" jdbcType="INTEGER" />
+		<result column="role_code" property="roleCode" jdbcType="VARCHAR" />
+		<result column="role_name" property="roleName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		user_id, user_code, user_name, password, sex, phone, mobile, email, birthday, avatar,
+    	user_type, user_status, is_delete, create_date, create_by, update_date, update_by
+	</sql>
+	<select id="selectByUserCode" resultMap="BaseResultMap" parameterType="cn.nesc.general.authcenter.model.TmUserPO" >
+		select
+		<include refid="Base_Column_List" />
+		from tm_user
+		where user_code = #{userCode}
+		and user_status = #{userStatus}
+	</select>
+
+	<!-- 根据代码查询用户所拥有的角色 -->
+	<select id="selectRoleByUserCode" resultMap="RoleResultMap" parameterType="string">
+		select tr.role_id,tr.role_code,tr.role_name from tm_user tu
+		left join tr_user_role tur on tu.user_id = tur.user_id
+		left join tm_role tr on tur.role_id = tr.role_id
+		where tr.role_status = ${@cn.nesc.general.common.dictionary.Constants@STATUS_ENABLE}
+		and tu.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
+		and tr.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
+		and tu.user_code = #{_parameter}
+	</select>
+
+	<select id="getMenuByRole" resultType="cn.nesc.general.authcenter.model.TmMenuPO" parameterType="integer">
+		SELECT tf.* FROM tm_menu tf join tr_role_func_front trff on tf.menu_id = trff.menu_id
+		WHERE tf.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
+		  AND trff.role_id = #{_parameter}
+		ORDER BY func_order
+	</select>
+
+	<!--  分页查询List -->
+	<select id="pageQueryUser" resultMap="BaseResultMap" parameterType="pager">
+		select
+		<include refid="Base_Column_List" />
+		from tm_user
+	</select>
+</mapper>

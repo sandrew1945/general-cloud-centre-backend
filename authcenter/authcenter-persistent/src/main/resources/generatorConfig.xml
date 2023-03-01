@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+  <classPathEntry location="/Users/summer/Documents/MavenRepo/mysql/mysql-connector-java/5.1.25/mysql-connector-java-5.1.25.jar" />
+  <context id="context1" >
+	<plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin>
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.6.22.190:3307/general?useUnicode=true&amp;characterEncoding=utf8" userId="root" password="workout" />
+    <javaModelGenerator targetPackage="cn.nesc.general.authcenter.model" targetProject="${generator.java.root}" />
+    <sqlMapGenerator targetPackage="cn.nesc.general.authcenter.mapper" targetProject="${generator.xml.root}" />
+    <javaClientGenerator targetPackage="cn.nesc.general.authcenter.mapper" targetProject="${generator.java.root}" type="XMLMAPPER" />
+
+    <table schema="" tableName="tm_user" domainObjectName="TmUserPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+    	<generatedKey column="user_id" sqlStatement="JDBC" identity="true" />
+    	<columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    	<columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+	</table>
+    <table schema="" tableName="tm_role" domainObjectName="TmRolePO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+    	<generatedKey column="role_id" sqlStatement="JDBC" identity="true" />
+    	<columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    	<columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+	</table>
+    <table schema="" tableName="tm_dept" domainObjectName="TmDeptPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+      <generatedKey column="dept_id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
+    <table schema="" tableName="tm_menu" domainObjectName="TmMenuPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+      <generatedKey column="menu_id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
+    <table schema="" tableName="tm_post" domainObjectName="TmPostPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+      <generatedKey column="post_id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
+    <table schema="" tableName="tr_user_dept" domainObjectName="TrUserDeptPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+      <generatedKey column="id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
+    <table schema="" tableName="tr_user_post" domainObjectName="TrUserPostPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+      <generatedKey column="id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
+    <table schema="" tableName="tr_user_role" domainObjectName="TrUserRolePO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+      <generatedKey column="id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
+    <table schema="" tableName="tr_role_func_front" domainObjectName="TrRoleFuncFrontPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+      <generatedKey column="id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
+
+  </context>
+</generatorConfiguration>

@@ -1,6 +1,5 @@
 package cn.nesc.general.authcenter.bean;
 
-import com.sandrew.bury.bean.PO;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,7 +8,7 @@ import java.util.Date;
  *
  */
 @Data
-public class RoleBean extends PO
+public class RoleBean
 {
     private Integer roleId;
 

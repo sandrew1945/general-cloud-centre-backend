@@ -2,8 +2,7 @@
 <configuration>
 
     <springProperty scope="context" name="applicationName" source="spring.application.name" />
-<!--    <property name="LOG_PATH" value="/opt/nesc/logs/indicator/"/>-->
-<!--    <property name="LOG_PATH" value="/Users/summer/Documents/LocalFilePath/logs/publish"/>-->
+    <property name="LOG_PATH" value="./logs/authcenter/"/>
     <property name="MAX_HISTORY" value="10"/>
     <property name="SIZE_CAP" value="10MB"/>
 
@@ -31,12 +30,7 @@
         <appender-ref ref="STDOUT" />
         <!--<appender-ref ref="SAVE-TO-FILE" />-->
     </root>
-
-    <logger name="cn.nesc.authcenter" additivity="false" level="debug">
-        <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="SAVE-TO-FILE" />-->
-    </logger>
-    <logger name="com.sandrew.bury" additivity="false" level="debug">
+    <logger name="cn.nesc.general" additivity="false" level="debug">
         <appender-ref ref="STDOUT" />
 <!--        <appender-ref ref="SAVE-TO-FILE" />-->
     </logger>

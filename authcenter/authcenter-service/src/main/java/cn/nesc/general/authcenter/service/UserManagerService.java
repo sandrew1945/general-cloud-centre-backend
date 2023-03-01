@@ -1,11 +1,13 @@
 package cn.nesc.general.authcenter.service;
 
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
 import cn.nesc.general.authcenter.model.TmRolePO;
 import cn.nesc.general.authcenter.model.TmUserPO;
-import cn.nesc.general.core.result.JsonResult;
 import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.bean.PageResult;
 import cn.nesc.general.core.exception.ServiceException;
-import com.sandrew.bury.bean.PageResult;
+import cn.nesc.general.core.result.JsonResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -20,16 +22,13 @@ import java.util.List;
 public interface UserManagerService
 {
 	/**
-	 *  用户管理分页查询
-	 * @param userCode
-	 * @param userName
-	 * @param userStatus
-	 * @param limit
-	 * @param curPage
-	 * @return
-	 * @throws ServiceException
-	 */
-	PageResult<AclUserBean> userManagerPageQuery(String userCode, String userName, Integer userStatus, int limit, int curPage) throws ServiceException;
+	 * @Author summer
+	 * @Description
+	 * @Date 16:11 2023/2/24
+	 * @Param [condition, limit, curPage]
+	 * @return cn.nesc.general.core.bean.PageResult<cn.nesc.general.core.bean.AclUserBean>
+	 **/
+	PageResult<UserManagerBO> userManagerPageQuery(UserManagerDTO condition, int limit, int curPage) throws ServiceException;
 
 	/**
 	 * 
@@ -41,7 +40,7 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult createUserInfo(TmUserPO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException;
+	Boolean createUserInfo(UserManagerDTO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException;
 	
 	/**
 	 * 
@@ -123,15 +122,6 @@ public interface UserManagerService
 	 * @throws ServiceException
 	 */
 	JsonResult createRelation(Integer userId, String rolesStr, AclUserBean aclUser) throws ServiceException;
-
-	/**
-	 * 清空用户照片
-	 * @param userId
-	 * @param loginUser
-	 * @return
-	 * @throws ServiceException
-	 */
-	JsonResult updateClearAvatar(Integer userId, AclUserBean loginUser) throws ServiceException;
 
 	/**
 	 *  获取全部有效用户

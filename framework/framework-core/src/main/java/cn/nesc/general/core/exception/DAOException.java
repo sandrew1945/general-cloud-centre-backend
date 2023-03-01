@@ -29,7 +29,7 @@ package cn.nesc.general.core.exception;
  * CreateDate  : 2009-11-2
  * @version    :
  */
-public class DAOException extends Exception
+public class DAOException extends BaseException
 {
 
 	/**
