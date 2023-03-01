@@ -1,6 +1,7 @@
 package cn.nesc.general.authcenter.service;
 
 
+import cn.nesc.general.authcenter.bean.login.LoginBO;
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.util.MenuNode;
 import cn.nesc.general.core.bean.AclUserBean;
@@ -24,7 +25,7 @@ public interface LoginService
 	 * @return
 	 * @throws ServiceException
 	 */
-	AclUserBean login(TmUserPO user) throws ServiceException;
+	LoginBO login(TmUserPO user) throws ServiceException;
 
 	/**
 	 *  获取用户信息

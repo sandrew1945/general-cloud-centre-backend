@@ -1,9 +1,11 @@
 package cn.nesc.general.authcenter.controller;
 
 
+import cn.nesc.general.authcenter.bean.login.LoginConvertor;
+import cn.nesc.general.authcenter.bean.login.LoginVO;
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.LoginService;
-import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.authcenter.service.util.MenuNode;
 import cn.nesc.general.core.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 @RestController
@@ -26,12 +29,14 @@ public class LoginController extends BaseController
     @Resource
     private LoginService loginService;
 
+    @Resource
+    private LoginConvertor loginConvertor;
 
     @Value(value = "${auth.custom.test}")
     private String custom;
 
     @PostMapping(value = "/login")
-    public AclUserBean login(String userCode, String password) throws JsonException
+    public LoginVO login(String userCode, String password) throws JsonException
     {
         log.debug("custom ----------->" + custom);
         try
@@ -39,7 +44,7 @@ public class LoginController extends BaseController
             TmUserPO user = new TmUserPO();
             user.setUserCode(userCode);
             user.setPassword(password);
-            return loginService.login(user);
+            return loginConvertor.toLoginVO(loginService.login(user));
         }
         catch (Exception e)
         {
@@ -88,12 +93,11 @@ public class LoginController extends BaseController
     }
 
     @GetMapping(value = "/getMenuByRole")
-    public JsonResult getMenuByRole(Integer roleId) throws JsonException
+    public List<MenuNode> getMenuByRole(Integer roleId) throws JsonException
     {
         try
         {
-            JsonResult result = new JsonResult();
-            return result.requestSuccess(loginService.getMenuByRole(roleId));
+            return loginService.getMenuByRole(roleId);
         }
         catch (ServiceException e)
         {
@@ -105,17 +109,16 @@ public class LoginController extends BaseController
     @PostMapping(value = "/logout")
     public
     @ResponseBody
-    JsonResult logout() throws JsonException
+    boolean logout() throws JsonException
     {
         try
         {
-            JsonResult result = new JsonResult();
             loginService.logout();
-            return result.requestSuccess(true);
+            return true;
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             throw new JsonException("登出系统失败", e);
         }
 

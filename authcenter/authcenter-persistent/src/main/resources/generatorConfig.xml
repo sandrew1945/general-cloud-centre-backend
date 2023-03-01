@@ -9,11 +9,12 @@
     <sqlMapGenerator targetPackage="cn.nesc.general.authcenter.mapper" targetProject="${generator.xml.root}" />
     <javaClientGenerator targetPackage="cn.nesc.general.authcenter.mapper" targetProject="${generator.java.root}" type="XMLMAPPER" />
 
+
     <table schema="" tableName="tm_user" domainObjectName="TmUserPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
-    	<generatedKey column="user_id" sqlStatement="JDBC" identity="true" />
-    	<columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
-    	<columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
-	</table>
+      <generatedKey column="user_id" sqlStatement="JDBC" identity="true" />
+      <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+      <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </table>
     <table schema="" tableName="tm_role" domainObjectName="TmRolePO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
     	<generatedKey column="role_id" sqlStatement="JDBC" identity="true" />
     	<columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>

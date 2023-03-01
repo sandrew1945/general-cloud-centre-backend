@@ -34,6 +34,8 @@
 package cn.nesc.general.authcenter.service.impl;
 
 
+import cn.nesc.general.authcenter.bean.login.LoginBO;
+import cn.nesc.general.authcenter.bean.login.LoginConvertor;
 import cn.nesc.general.authcenter.mapper.custom.LoginMapper;
 import cn.nesc.general.authcenter.model.TmMenuPO;
 import cn.nesc.general.authcenter.model.TmRolePO;
@@ -74,16 +76,19 @@ public class LoginServiceImpl implements LoginService
     @Resource
     private UserManagerService userManagerService;
 
+    @Resource
+    private LoginConvertor loginConvertor;
+
 
 
     @Override
-    public AclUserBean login(TmUserPO user) throws ServiceException
+    public LoginBO login(TmUserPO user) throws ServiceException
     {
         try
         {
             Subject subject = SecurityUtils.getSubject();
             MyUsernamePasswordToken token = new MyUsernamePasswordToken(user.getUserCode(), user.getPassword());
-
+            LoginBO result = new LoginBO();
             if (!subject.isAuthenticated())
             {
                 subject.login(token);
@@ -92,12 +97,14 @@ public class LoginServiceImpl implements LoginService
                 loginUser.setUserId(databaseUser.getUserId());
                 loginUser.setToken(subject.getSession().getId().toString());
                 subject.getSession().setAttribute(Constants.LOGIN_USER, loginUser);
-                return loginUser;
+                result = loginConvertor.toLoginBO(loginUser);
+                return result;
             }
             else
             {
                 AclUserBean loginUser = (AclUserBean) subject.getSession().getAttribute(Constants.LOGIN_USER);
-                return loginUser;
+                result = loginConvertor.toLoginBO(loginUser);
+                return result;
             }
         }
         catch (Exception e)
