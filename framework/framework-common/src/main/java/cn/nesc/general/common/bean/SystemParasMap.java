@@ -1,4 +1,4 @@
-package cn.nesc.general.core.bean;
+package cn.nesc.general.common.bean;
 
 import java.util.HashMap;
 import java.util.Map;

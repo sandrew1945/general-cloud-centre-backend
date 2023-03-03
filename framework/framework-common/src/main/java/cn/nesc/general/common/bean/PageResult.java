@@ -20,13 +20,15 @@
 /**
  * $Id: PageResult.java,v 0.1 2010-4-16 ����02:18:12 SuMMeR Exp $
  */
-package cn.nesc.general.core.bean;
+package cn.nesc.general.common.bean;
 
 
+import cn.nesc.general.common.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -155,6 +157,42 @@ public class PageResult<T>
 		this.records = records;
 	}
 
+	public PageResult convert(Class clz)
+	{
+		PageResult result = new PageResult();
+		try
+		{
+			result.setCurPage(this.getCurPage());
+			result.setPageSize(this.getPageSize());
+			result.setTotalPages(this.getTotalPages());
+			result.setTotalRecords(this.getTotalRecords());
+			List list = this.getRecords().stream().map(t -> {
+				Object r = null;
+				try
+				{
+					r = clz.newInstance();
+					ObjectUtils.copyProperties(r, t);
+				}
+				catch (InstantiationException e)
+				{
+					e.printStackTrace();
+				}
+				catch (IllegalAccessException e)
+				{
+					e.printStackTrace();
+				}
+				return r;
+			}).collect(Collectors.toList());
+			result.setRecords(list);
+			return result;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 	public PageResult convert(Function<List, List> convertor)
 	{
 		PageResult result = new PageResult();
@@ -164,8 +202,7 @@ public class PageResult<T>
 			result.setPageSize(this.getPageSize());
 			result.setTotalPages(this.getTotalPages());
 			result.setTotalRecords(this.getTotalRecords());
-			List newRecords = convertor.apply(this.getRecords());
-			result.setRecords(newRecords);
+			result.setRecords(convertor.apply(this.getRecords()));
 			return result;
 		}
 		catch (Exception e)

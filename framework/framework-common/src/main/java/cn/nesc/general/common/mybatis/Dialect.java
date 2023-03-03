@@ -1,4 +1,4 @@
-package cn.nesc.general.core.mybatis;
+package cn.nesc.general.common.mybatis;
 
 /**
  * 类似hibernate的Dialect,但只精简出分页部分

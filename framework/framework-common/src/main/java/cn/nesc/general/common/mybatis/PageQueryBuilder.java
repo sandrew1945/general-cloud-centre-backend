@@ -21,10 +21,10 @@
 * $Id: PageQueryBuilder.java,v 0.1 2016年5月26日 下午3:37:06 Administrator Exp $
 */
 
-package cn.nesc.general.core.mybatis;
+package cn.nesc.general.common.mybatis;
 
 
-import cn.nesc.general.core.bean.PageResult;
+import cn.nesc.general.common.bean.PageResult;
 import cn.nesc.general.core.exception.DAOException;
 
 import java.lang.reflect.InvocationTargetException;

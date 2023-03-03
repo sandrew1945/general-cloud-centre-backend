@@ -2,7 +2,7 @@ package cn.nesc.general.authcenter.config.shiro;
 
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.UserManagerService;
-import cn.nesc.general.core.bean.Principal;
+import cn.nesc.general.core.shiro.Principal;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;

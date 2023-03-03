@@ -21,7 +21,7 @@
 * $Id: BaseCondition.java,v 0.1 2014年6月18日 上午11:17:54 Administrator Exp $
 */
 
-package cn.nesc.general.core.bean;
+package cn.nesc.general.common.bean;
 
 import java.lang.reflect.Field;
 

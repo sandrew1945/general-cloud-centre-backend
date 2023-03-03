@@ -1,7 +1,7 @@
-package cn.nesc.general.core.controller;
+package cn.nesc.general.common.controller;
 
 
-import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.common.bean.AclUserBean;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;

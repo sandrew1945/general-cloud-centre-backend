@@ -5,7 +5,6 @@ import cn.nesc.general.core.exception.ActionException;
 import cn.nesc.general.core.result.JsonResult;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -24,7 +23,7 @@ import java.util.Map;
  * CreateDate  : 2016年5月31日
  * @version    :
  */
-@Component
+//@Component
 public class GlobalExceptionHandler implements HandlerExceptionResolver
 {
 

@@ -21,7 +21,7 @@
 * $Id: AclUserBean.java,v 1.1 2013/07/31 08:32:41 xin.jin Exp $
 */
 
-package cn.nesc.general.core.bean;
+package cn.nesc.general.common.bean;
 
 import lombok.Data;
 

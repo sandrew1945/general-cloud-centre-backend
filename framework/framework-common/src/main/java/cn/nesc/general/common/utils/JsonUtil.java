@@ -28,7 +28,7 @@ public class JsonUtil
 //        mapper.registerModule(BaseWriteOperationDeserializer.getModule());
         mapper.setTimeZone(DateTimeZone.getDefault().toTimeZone());
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
     }
 
     public static void registerModule(SimpleModule module)

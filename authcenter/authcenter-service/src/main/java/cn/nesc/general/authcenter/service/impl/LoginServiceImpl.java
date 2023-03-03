@@ -36,15 +36,19 @@ package cn.nesc.general.authcenter.service.impl;
 
 import cn.nesc.general.authcenter.bean.login.LoginBO;
 import cn.nesc.general.authcenter.bean.login.LoginConvertor;
+import cn.nesc.general.authcenter.bean.rolemanager.RoleManagerConvertor;
+import cn.nesc.general.authcenter.bean.usermanager.UserInfoVO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerConvertor;
 import cn.nesc.general.authcenter.mapper.custom.LoginMapper;
 import cn.nesc.general.authcenter.model.TmMenuPO;
-import cn.nesc.general.authcenter.model.TmRolePO;
+import cn.nesc.general.authcenter.model.TmRoleVO;
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.LoginService;
 import cn.nesc.general.authcenter.service.UserManagerService;
 import cn.nesc.general.authcenter.service.util.MenuNode;
+import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.common.dictionary.Constants;
-import cn.nesc.general.core.bean.AclUserBean;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.shiro.MyUsernamePasswordToken;
 import lombok.extern.slf4j.Slf4j;
@@ -75,9 +79,14 @@ public class LoginServiceImpl implements LoginService
     private LoginMapper loginMapper;
     @Resource
     private UserManagerService userManagerService;
-
     @Resource
     private LoginConvertor loginConvertor;
+
+    @Resource
+    private RoleManagerConvertor roleManagerConvertor;
+
+    @Resource
+    private UserManagerConvertor userManagerConvertor;
 
 
 
@@ -115,22 +124,16 @@ public class LoginServiceImpl implements LoginService
     }
 
     @Override
-    public AclUserBean userInfo(AclUserBean loginUser) throws ServiceException
+    public UserInfoVO userInfo(AclUserBean loginUser) throws ServiceException
     {
         try
         {
-            TmUserPO user = userManagerService.findByUserId(loginUser.getUserId());
-            loginUser.setUserCode(user.getUserCode());
-            loginUser.setUserName(user.getUserName());
-            loginUser.setSex(user.getSex());
-            loginUser.setUserType(user.getUserType());
-            loginUser.setPhone(user.getPhone());
-            loginUser.setMobile(user.getMobile());
-            loginUser.setEmail(user.getEmail());
-            loginUser.setAvatarPath(user.getAvatar());
-            List<TmRolePO> roleList = userManagerService.getRelationRolesByUserId(loginUser.getUserId());
-            loginUser.setRoleList(roleList);
-            return loginUser;
+            UserInfoVO userInfo = new UserInfoVO();
+            UserManagerBO user = userManagerService.findByUserId(loginUser.getUserId());
+            userInfo = loginConvertor.toUserInfoVO(user);
+            List<TmRoleVO> roleList = roleManagerConvertor.toRoleVOList(userManagerService.getRelationRolesByUserId(loginUser.getUserId()));
+            userInfo.setRoleList(roleList);
+            return userInfo;
         }
         catch (Exception e)
         {

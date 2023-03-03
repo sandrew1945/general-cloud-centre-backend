@@ -1,10 +1,9 @@
 package cn.nesc.general.common.utils;
 
+import cn.nesc.general.common.bean.SystemParasMap;
+import cn.nesc.general.common.bean.VO;
 import cn.nesc.general.core.annotation.EnumHandler;
 import cn.nesc.general.core.annotation.ParaDesc;
-import cn.nesc.general.core.annotation.RequestHandler;
-import cn.nesc.general.core.bean.BO;
-import cn.nesc.general.core.bean.SystemParasMap;
 import cn.nesc.general.core.common.Reflections;
 import cn.nesc.general.core.enums.BaseEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -21,18 +20,18 @@ public class MagicOOO
 {
     /**
      *  自动回写bo中数据字典的描述信息
-     * @param bo
+     * @param vo
      */
-    public static void getDescByCode(BO bo)
+    public static void getDescByCode(VO vo)
     {
-        Field[] fields = bo.getClass().getDeclaredFields();
+        Field[] fields = vo.getClass().getDeclaredFields();
         Arrays.stream(fields).forEach(field -> {
             ParaDesc annotation = field.getAnnotation(ParaDesc.class);
             if (null != annotation)
             {
                 String codeField = annotation.value();
 //                log.debug("codeField ----->" + codeField);
-                Object codeValue = Reflections.invokeGetter(bo, codeField);
+                Object codeValue = Reflections.invokeGetter(vo, codeField);
                 if (codeField instanceof String)
                 {
 //                    log.debug("codeValue ----->" + codeValue);
@@ -40,7 +39,7 @@ public class MagicOOO
                     String desc = systemParasMap.getParasMap().get(codeValue);
                     if (StringUtils.isNotEmpty(desc))
                     {
-                        Reflections.invokeSetter(bo, field.getName() ,desc);
+                        Reflections.invokeSetter(vo, field.getName() ,desc);
                     }
                 }
             }
@@ -50,81 +49,46 @@ public class MagicOOO
 
     /**
      *  自动回写bo中数据字典的描述信息(枚举)
-     * @param bo
+     * @param vo
      */
-    public static void enumHandle(BO bo)
+    public static void enumHandle(VO vo)
     {
-        Field[] fields = bo.getClass().getDeclaredFields();
+        Field[] fields = vo.getClass().getDeclaredFields();
         Arrays.stream(fields).forEach(field -> {
             EnumHandler annotation = field.getAnnotation(EnumHandler.class);
             if (null != annotation)
             {
                 Class<? extends BaseEnum> baseEnum = annotation.value();
-                Object codeValue = Reflections.invokeGetter(bo, field.getName());
+                Object codeValue = Reflections.invokeGetter(vo, field.getName());
                 if (null != codeValue)
                 {
                     String desc = EnumUtil.getEnumMessage("" + codeValue, baseEnum);
                     if (StringUtils.isNotEmpty(desc))
                     {
-                        Reflections.invokeSetter(bo, field.getName() ,desc);
+                        Reflections.invokeSetter(vo, field.getName() ,desc);
                     }
                 }
             }
 
         });
-    }
-
-
-    /**
-     * @Description: 调用数据中台前，码表转化
-     * @Author: jinjin
-     * @Date: 2021/11/12 10:04
-     * @Param: [bo]
-     * @retrun: void
-     **/
-    public static void enumRequestHandle(BO bo)
-    {
-        Field[] fields = bo.getClass().getDeclaredFields();
-        Arrays.stream(fields).forEach(field -> {
-            RequestHandler annotation = field.getAnnotation(RequestHandler.class);
-            if (null != annotation)
-            {
-                Class<? extends BaseEnum> baseEnum = annotation.value();
-                Object codeValue = Reflections.invokeGetter(bo, field.getName());
-                if (null != codeValue)
-                {
-                    String desc = EnumUtil.getEnumMessage("" + codeValue, baseEnum);
-                    if (StringUtils.isNotEmpty(desc))
-                    {
-                        Reflections.invokeSetter(bo, field.getName() ,desc);
-                    }
-                }
-            }
-
-        });
-    }
-
-    public static void enumRequestHandle(List<? extends BO> boList)
-    {
-        boList.stream().forEach(bo -> enumHandle(bo));
     }
 
     /**
      * 批量自动回写bo中数据字典的描述信息
-     * @param boList
+     * @param voList
      */
-    public static void getDescByCode(List<? extends BO> boList)
+    public static void getDescByCode(List<? extends VO> voList)
     {
-        boList.stream().forEach(bo -> getDescByCode(bo));
+        voList.stream().forEach(vo -> getDescByCode(vo));
     }
 
     /**
      *  批量自动回写bo中数据字典的描述信息(枚举)
-     * @param boList
+     * @param voList
      */
-    public static void enumHandle(List<? extends BO> boList)
+    public static void enumHandle(List<? extends VO> voList)
     {
-        boList.stream().forEach(bo -> enumHandle(bo));
+        voList.stream().forEach(vo -> enumHandle(vo));
     }
 
     /**
@@ -137,12 +101,12 @@ public class MagicOOO
         ObjectUtils.copyProperties(target, origin);
     }
 
-    public static List copyProperties(List origin, Class<? extends BO> clz)
+    public static List copyProperties(List origin, Class<? extends VO> clz)
     {
-        List<? extends BO> boList = new ArrayList<>();
+        List<? extends VO> voList = new ArrayList<>();
 
-        boList = (List<? extends BO>) origin.stream().map(t -> {
-            BO r = null;
+        voList = (List<? extends VO>) origin.stream().map(t -> {
+            VO r = null;
             try
             {
                 r = clz.newInstance();
@@ -158,6 +122,6 @@ public class MagicOOO
             }
             return r;
         }).collect(Collectors.toList());
-        return boList;
+        return voList;
     }
 }

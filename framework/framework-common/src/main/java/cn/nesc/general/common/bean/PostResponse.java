@@ -1,4 +1,4 @@
-package cn.nesc.general.core.bean;
+package cn.nesc.general.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

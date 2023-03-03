@@ -1,6 +1,6 @@
 /**
  * Copyright (C), 2015-2023, 东北证券股份有限公司
- * FileName: UserManagerConvertor
+ * FileName: RoleManagerConvertor
  * Author:   summer
  * Date:     2023/2/27 14:25
  * Description:
@@ -11,13 +11,15 @@
 
 package cn.nesc.general.authcenter.bean.usermanager;
 
+import cn.nesc.general.authcenter.model.TmUserPO;
+import cn.nesc.general.authcenter.model.TmUserVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
 
 /**
- * @ClassName UserManagerConvertor
+ * @ClassName RoleManagerConvertor
  * @Description
  * @Author summer
  * @Date 2023/2/27 14:25
@@ -28,6 +30,13 @@ public interface UserManagerConvertor
     @Mapping(source = "userManagerBO.sex", target = "sex")
     @Mapping(source = "userManagerBO.userStatus", target = "userStatus")
     UserPageQueryVO toUserPageQueryVO(UserManagerBO userManagerBO);
+
+    @Mapping(source = "userManagerBO.sex", target = "sex")
+    @Mapping(source = "userManagerBO.userStatus", target = "userStatus")
+    @Mapping(source = "userManagerBO.birthday", target = "birthday", dateFormat = "yyyy/MMM/dd")
+    TmUserVO toUserVO(UserManagerBO userManagerBO);
+
+    UserManagerBO toUserManagerBO(TmUserPO tmUserPO);
 
 
     List<UserPageQueryVO> toUserPageQueryVO(List<UserManagerBO> doctor);

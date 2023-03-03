@@ -21,7 +21,7 @@
 * $Id: Principal.java,v 0.1 2016年10月25日 下午3:20:45 SuMMeR Exp $
 */
 
-package cn.nesc.general.core.bean;
+package cn.nesc.general.core.shiro;
 
 import lombok.Data;
 

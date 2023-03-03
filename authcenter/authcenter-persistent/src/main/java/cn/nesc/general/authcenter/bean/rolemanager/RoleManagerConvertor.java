@@ -9,12 +9,14 @@
  * 作者姓名           修改时间           版本号              描述
  **/
 
-package cn.nesc.general.authcenter.bean.login;
+package cn.nesc.general.authcenter.bean.rolemanager;
 
-import cn.nesc.general.authcenter.bean.usermanager.UserInfoVO;
-import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
-import cn.nesc.general.common.bean.AclUserBean;
+import cn.nesc.general.authcenter.model.TmRolePO;
+import cn.nesc.general.authcenter.model.TmRoleVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import java.util.List;
 
 /**
  * @ClassName RoleManagerConvertor
@@ -23,11 +25,11 @@ import org.mapstruct.Mapper;
  * @Date 2023/2/27 14:25
  **/
 @Mapper(componentModel = "spring")
-public interface LoginConvertor
+public interface RoleManagerConvertor
 {
-    LoginBO toLoginBO(AclUserBean aclUserBean);
+    @Mapping(source = "tmRolePO.roleType", target = "roleType")
+    @Mapping(source = "tmRolePO.roleStatus", target = "roleStatus")
+    TmRoleVO toRoleVO(TmRolePO tmRolePO);
 
-    LoginVO toLoginVO(LoginBO loginBO);
-
-    UserInfoVO toUserInfoVO(UserManagerBO userManagerBO);
+    List<TmRoleVO> toRoleVOList(List<TmRolePO> roles);
 }

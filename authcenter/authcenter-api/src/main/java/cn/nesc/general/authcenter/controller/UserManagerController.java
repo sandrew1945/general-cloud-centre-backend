@@ -6,10 +6,11 @@ import cn.nesc.general.authcenter.bean.usermanager.UserManagerConvertor;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
 import cn.nesc.general.authcenter.bean.usermanager.UserPageQueryVO;
 import cn.nesc.general.authcenter.model.TmUserPO;
+import cn.nesc.general.authcenter.model.TmUserVO;
 import cn.nesc.general.authcenter.service.UserManagerService;
-import cn.nesc.general.core.bean.AclUserBean;
-import cn.nesc.general.core.bean.PageResult;
-import cn.nesc.general.core.controller.BaseController;
+import cn.nesc.general.common.bean.AclUserBean;
+import cn.nesc.general.common.bean.PageResult;
+import cn.nesc.general.common.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.result.JsonResult;
@@ -55,13 +56,12 @@ public class UserManagerController extends BaseController
     }
 
     @GetMapping("getUserInfoById")
-    public @ResponseBody JsonResult getUserInfoById(Integer userId) throws JsonException
+    public @ResponseBody TmUserVO getUserInfoById(Integer userId) throws JsonException
     {
         try
         {
-            JsonResult result = new JsonResult();
-            TmUserPO user = userManagerService.findByUserId(userId);
-            return result.requestSuccess(user);
+            UserManagerBO user = userManagerService.findByUserId(userId);
+            return userManagerConvertor.toUserVO(user);
         }
         catch (Exception e)
         {

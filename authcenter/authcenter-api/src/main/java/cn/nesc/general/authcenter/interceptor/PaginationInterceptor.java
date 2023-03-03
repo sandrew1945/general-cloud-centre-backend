@@ -2,8 +2,8 @@ package cn.nesc.general.authcenter.interceptor;
 
 
 import cn.nesc.general.core.common.Reflections;
-import cn.nesc.general.core.mybatis.Pager;
-import cn.nesc.general.core.mybatis.SQLHelper;
+import cn.nesc.general.common.mybatis.Pager;
+import cn.nesc.general.common.mybatis.SQLHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;

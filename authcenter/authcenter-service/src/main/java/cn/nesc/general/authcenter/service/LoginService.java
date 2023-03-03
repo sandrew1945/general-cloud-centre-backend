@@ -2,9 +2,10 @@ package cn.nesc.general.authcenter.service;
 
 
 import cn.nesc.general.authcenter.bean.login.LoginBO;
+import cn.nesc.general.authcenter.bean.usermanager.UserInfoVO;
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.util.MenuNode;
-import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.core.exception.ServiceException;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface LoginService
 	 * @return
 	 * @throws ServiceException
 	 */
-	AclUserBean userInfo(AclUserBean loginUser) throws ServiceException;
+	UserInfoVO userInfo(AclUserBean loginUser) throws ServiceException;
 
 	/**
 	 * @Author summer

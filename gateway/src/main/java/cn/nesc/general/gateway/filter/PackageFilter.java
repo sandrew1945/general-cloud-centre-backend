@@ -14,6 +14,7 @@ package cn.nesc.general.gateway.filter;
 import cn.nesc.general.common.utils.JsonUtil;
 import cn.nesc.general.core.result.JsonResult;
 import com.google.common.io.CharStreams;
+import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.POST_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -63,19 +65,21 @@ public class PackageFilter extends ZuulFilter
     @Override
     public int filterOrder()
     {
-        return 1;
+        return 2;
     }
 
     /**
-     * 判断该过滤器是否需要被执行。这里我们直接返回了true，因此该过滤器对所有请求都会生效。
-     * 实际运用中我们可以利用该函数来指定过滤器的有效范围。
+     * 根据服务返回的header信息判断，服务如果异常会在header里添加自定义属性 Has-Error=error
      *
      * @return
      */
     @Override
     public boolean shouldFilter()
     {
-        return true;
+        RequestContext ctx = RequestContext.getCurrentContext();
+        List<Pair<String, String>> zuulResponseHeaders = ctx.getZuulResponseHeaders();
+        boolean hasErrorHeader = zuulResponseHeaders.stream().filter(stringStringPair -> "Has-Error".equals(stringStringPair.first())).findFirst().isPresent();
+        return ctx.getThrowable() == null && !hasErrorHeader;
     }
 
     /**

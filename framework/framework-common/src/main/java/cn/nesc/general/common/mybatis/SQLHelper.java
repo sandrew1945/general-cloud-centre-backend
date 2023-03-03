@@ -1,4 +1,4 @@
-package cn.nesc.general.core.mybatis;
+package cn.nesc.general.common.mybatis;
 
 
 import cn.nesc.general.core.common.Reflections;

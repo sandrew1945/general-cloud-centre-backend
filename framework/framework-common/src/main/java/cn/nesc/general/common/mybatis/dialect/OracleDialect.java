@@ -1,7 +1,7 @@
-package cn.nesc.general.core.mybatis.dialect;
+package cn.nesc.general.common.mybatis.dialect;
 
 
-import cn.nesc.general.core.mybatis.Dialect;
+import cn.nesc.general.common.mybatis.Dialect;
 
 /**
  * Oracle的方言实现

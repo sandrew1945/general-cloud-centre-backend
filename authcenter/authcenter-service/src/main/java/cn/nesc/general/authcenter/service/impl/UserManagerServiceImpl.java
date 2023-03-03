@@ -27,6 +27,7 @@ package cn.nesc.general.authcenter.service.impl;
 
 
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerConvertor;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
 import cn.nesc.general.authcenter.mapper.TmUserPOMapper;
 import cn.nesc.general.authcenter.mapper.TrUserRolePOMapper;
@@ -36,11 +37,11 @@ import cn.nesc.general.authcenter.service.UserManagerService;
 import cn.nesc.general.common.dictionary.Fixcode;
 import cn.nesc.general.common.encrypt.MD5Encrypt;
 import cn.nesc.general.common.utils.MagicOOO;
-import cn.nesc.general.core.bean.AclUserBean;
-import cn.nesc.general.core.bean.PageResult;
+import cn.nesc.general.common.bean.AclUserBean;
+import cn.nesc.general.common.bean.PageResult;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.exception.TooManyResultsException;
-import cn.nesc.general.core.mybatis.PageQueryBuilder;
+import cn.nesc.general.common.mybatis.PageQueryBuilder;
 import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -74,6 +75,9 @@ public class UserManagerServiceImpl implements UserManagerService
 
     @Resource
     private TrUserRolePOMapper trUserRolePOMapper;
+
+    @Resource
+    private UserManagerConvertor userManagerConvertor;
 
     @Override
     public PageResult<UserManagerBO> userManagerPageQuery(UserManagerDTO condition, int limit, int curPage) throws ServiceException
@@ -155,14 +159,14 @@ public class UserManagerServiceImpl implements UserManagerService
 
 
     @Override
-    public TmUserPO findByUserId(Integer userId) throws ServiceException
+    public UserManagerBO findByUserId(Integer userId) throws ServiceException
     {
 
         try
         {
             log.debug("缓存中不存在用户信息,读取数据库...");
             TmUserPO tmUserPO = tmUserPOMapper.selectByPrimaryKey(userId);
-            return tmUserPO;
+            return userManagerConvertor.toUserManagerBO(tmUserPO);
         }
         catch (Exception e)
         {

@@ -1,7 +1,7 @@
-package cn.nesc.general.core.controller;
+package cn.nesc.general.common.controller;
 
 
-import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.core.exception.BaseException;
 import cn.nesc.general.core.result.JsonResult;
 import org.apache.shiro.SecurityUtils;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,20 +26,25 @@ public class BaseController
     private final static String LOGIN_USER = "loginUser";
     private final static String APP_KEY = "authc.appKey";
 
+    private final static  String ERROR_TAG = "Has-Error";
+
     /**
      *  处理数据绑定异常
      * @param ex
      * @return
      */
     @ExceptionHandler(value = ServletRequestBindingException.class)
-    public JsonResult errorBindingHandler(Exception ex) {
+    public JsonResult errorBindingHandler(HttpServletResponse response, Exception ex) {
+        // 服务发生异常，在response的header中添加自定义头信息 Has-Error=true，方便其他服务判断是否请求成功
+        response.setHeader(ERROR_TAG, "true");
         JsonResult result = new JsonResult();
         result.requestFailure(ex.getMessage());
         return result;
     }
 
     @ExceptionHandler(value = AuthorizationException.class)
-    public JsonResult noAuthorization(Exception ex) {
+    public JsonResult noAuthorization(HttpServletResponse response, Exception ex) {
+        response.setHeader(ERROR_TAG, "true");
         JsonResult result = new JsonResult();
         result.requestFailure("您无权访问该资源，请联系系统管理员");
         return result;
@@ -50,7 +56,8 @@ public class BaseController
      * @return
      */
     @ExceptionHandler(value = BaseException.class)
-    public JsonResult errorActionHandler(Exception ex) {
+    public JsonResult errorActionHandler(HttpServletResponse response, Exception ex) {
+        response.setHeader(ERROR_TAG, "true");
         JsonResult result = new JsonResult();
         while (null != ex)
         {
@@ -71,7 +78,8 @@ public class BaseController
      * @return
      */
     @ExceptionHandler(value = Exception.class)
-    public JsonResult unknowExceptionHandler(Exception ex) {
+    public JsonResult unknowExceptionHandler(HttpServletResponse response, Exception ex) {
+        response.setHeader(ERROR_TAG, "true");
         JsonResult result = new JsonResult();
         result.requestFailure(ex.getMessage());
         return result;

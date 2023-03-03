@@ -20,7 +20,7 @@
 		<result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
 		<result column="update_by" jdbcType="VARCHAR" property="updateBy" />
 	</resultMap>
-	<resultMap id="RoleResultMap" type="cn.nesc.general.core.bean.AclUserBean" >
+	<resultMap id="RoleResultMap" type="cn.nesc.general.common.bean.AclUserBean" >
 		<result column="role_id" property="roleId" jdbcType="INTEGER" />
 		<result column="role_code" property="roleCode" jdbcType="VARCHAR" />
 		<result column="role_name" property="roleName" jdbcType="VARCHAR" />

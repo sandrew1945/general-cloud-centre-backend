@@ -11,9 +11,14 @@
 
 package cn.nesc.general.authcenter.bean.usermanager;
 
+import cn.nesc.general.authcenter.model.TmRoleVO;
+import cn.nesc.general.common.bean.VO;
+import cn.nesc.general.common.dictionary.Fixcode;
+import cn.nesc.general.core.annotation.EnumHandler;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName UserManagerBO
@@ -22,7 +27,7 @@ import java.util.Date;
  * @Date 2023/2/27 14:19
  **/
 @Data
-public class UserManagerBO
+public class UserInfoVO implements VO
 {
     private Integer userId;
 
@@ -38,7 +43,8 @@ public class UserManagerBO
 
     private String avatar;
 
-    private Integer sex;
+    @EnumHandler(Fixcode.class)
+    private String sex;
 
     private String phone;
 
@@ -46,5 +52,8 @@ public class UserManagerBO
 
     private String email;
 
-    private Integer userStatus;
+    private List<TmRoleVO> roleList;
+
+    @EnumHandler(Fixcode.class)
+    private String userStatus;
 }

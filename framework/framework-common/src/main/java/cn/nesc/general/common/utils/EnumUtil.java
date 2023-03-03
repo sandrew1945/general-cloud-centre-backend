@@ -16,7 +16,7 @@ public class EnumUtil
         {
             Method method = clz.getMethod("values", null);
             BaseEnum[] baseEnums = (BaseEnum[])method.invoke(null, null);
-            Optional<BaseEnum> optional = Arrays.stream(baseEnums).filter(baseEnum -> baseEnum.getCode().equals(code)).findAny();
+            Optional<BaseEnum> optional = Arrays.stream(baseEnums).filter(baseEnum -> baseEnum.getCode().toString().equals(code)).findAny();
             if (optional.isPresent())
             {
                 message = optional.get().getDesc();

@@ -68,7 +68,7 @@
     </select>
     
     <!-- 查询全部未关联角色 -->
-    <select id="getRoleExistOwn" resultType="cn.nesc.general.authcenter.model.TmRolePO" parameterType="cn.nesc.general.core.bean.AclUserBean">
+    <select id="getRoleExistOwn" resultType="cn.nesc.general.authcenter.model.TmRolePO" parameterType="cn.nesc.general.common.bean.AclUserBean">
 		select
 			tr.role_id,
 			tr.role_code,
