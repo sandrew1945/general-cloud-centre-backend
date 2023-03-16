@@ -1,13 +1,13 @@
 package cn.nesc.general.stub.authcenter;
 
+import cn.nesc.general.common.bean.AclUserBean;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Component
-@FeignClient(value = "auth")
-public interface AuthCenterService
+//@Component
+@FeignClient(value = "AUTH")
+public interface AuthCenterStub
 {
 
     /**
@@ -19,4 +19,8 @@ public interface AuthCenterService
      **/
     @RequestMapping(value = "/validateToken")
     boolean validateToken(@RequestParam("token") String token);
+
+
+    @RequestMapping(value = "/security/getLoginUser")
+    AclUserBean getLoginUser();
 }

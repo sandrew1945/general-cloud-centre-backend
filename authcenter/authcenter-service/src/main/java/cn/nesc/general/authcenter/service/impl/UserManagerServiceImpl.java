@@ -220,12 +220,12 @@ public class UserManagerServiceImpl implements UserManagerService
      * @throws ServiceException
      */
     @Override
-    public JsonResult updateUserInfo(TmUserPO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException
+    public int updateUserInfo(UserManagerDTO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException
     {
-        JsonResult result = new JsonResult();
         try
         {
-            TmUserPO updateUser = user;
+
+            TmUserPO updateUser = userManagerConvertor.toUserPO(user);
             updateUser.setUpdateBy(aclUser.getUserCode());
             updateUser.setUpdateDate(new Date());
 
@@ -234,7 +234,7 @@ public class UserManagerServiceImpl implements UserManagerService
             {
                 updateUser.setPassword(MD5Encrypt.MD5Encode(user.getPassword()));
             }
-            return result.requestSuccess(tmUserPOMapper.updateByPrimaryKey(updateUser));
+            return tmUserPOMapper.updateByPrimaryKeySelective(updateUser);
         }
         catch (Exception e)
         {

@@ -11,6 +11,7 @@
 
 package cn.nesc.general.authcenter.bean.usermanager;
 
+import cn.nesc.general.common.bean.DTO;
 import lombok.Data;
 
 import java.util.Date;
@@ -22,8 +23,10 @@ import java.util.Date;
  * @Date 2023/2/24 16:09
  **/
 @Data
-public class UserManagerDTO
+public class UserManagerDTO implements DTO
 {
+    private Integer userId;
+
     private String userCode;
 
     private String userName;

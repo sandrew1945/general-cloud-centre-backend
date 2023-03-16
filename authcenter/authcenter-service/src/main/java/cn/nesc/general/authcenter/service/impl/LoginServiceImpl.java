@@ -104,6 +104,8 @@ public class LoginServiceImpl implements LoginService
                 TmUserPO databaseUser = userManagerService.getUserByCode(user.getUserCode());
                 AclUserBean loginUser = new AclUserBean();
                 loginUser.setUserId(databaseUser.getUserId());
+                loginUser.setUserCode(databaseUser.getUserCode());
+                loginUser.setUserName(databaseUser.getUserName());
                 loginUser.setToken(subject.getSession().getId().toString());
                 subject.getSession().setAttribute(Constants.LOGIN_USER, loginUser);
                 result = loginConvertor.toLoginBO(loginUser);

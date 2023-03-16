@@ -4,6 +4,7 @@ package cn.nesc.general.common.controller;
 import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.core.exception.BaseException;
 import cn.nesc.general.core.result.JsonResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.Session;
@@ -15,18 +16,24 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
 @RestControllerAdvice
+@Slf4j
 public class BaseController
 {
-    private final static String LOGIN_USER = "loginUser";
-    private final static String APP_KEY = "authc.appKey";
+    protected final static String LOGIN_USER = "loginUser";
+    protected final static String APP_KEY = "authc.appKey";
 
-    private final static  String ERROR_TAG = "Has-Error";
+    protected final static  String ERROR_TAG = "Has-Error";
+
+    @Resource
+    protected HttpServletRequest request;
 
     /**
      *  处理数据绑定异常
@@ -100,6 +107,7 @@ public class BaseController
      */
     protected AclUserBean getLoginUser()
     {
+        log.debug("user token ========> " + request.getHeader("sid"));
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         AclUserBean loginUser = (AclUserBean) session.getAttribute(LOGIN_USER);

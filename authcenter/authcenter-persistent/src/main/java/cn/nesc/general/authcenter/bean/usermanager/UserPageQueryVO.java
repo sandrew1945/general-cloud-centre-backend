@@ -11,6 +11,7 @@
 
 package cn.nesc.general.authcenter.bean.usermanager;
 
+import cn.nesc.general.common.bean.VO;
 import lombok.Builder;
 import lombok.Data;
 
@@ -22,7 +23,7 @@ import lombok.Data;
  **/
 @Data
 @Builder
-public class UserPageQueryVO
+public class UserPageQueryVO implements VO
 {
     private Integer userId;
 

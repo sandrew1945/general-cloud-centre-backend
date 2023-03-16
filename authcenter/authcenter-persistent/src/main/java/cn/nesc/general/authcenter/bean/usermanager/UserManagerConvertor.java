@@ -38,6 +38,8 @@ public interface UserManagerConvertor
 
     UserManagerBO toUserManagerBO(TmUserPO tmUserPO);
 
+    TmUserPO toUserPO(UserManagerDTO userManagerDTO);
+
 
     List<UserPageQueryVO> toUserPageQueryVO(List<UserManagerBO> doctor);
 }

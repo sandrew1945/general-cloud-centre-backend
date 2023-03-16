@@ -78,7 +78,7 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult updateUserInfo(TmUserPO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException;
+	int updateUserInfo(UserManagerDTO user, MultipartFile avatar, AclUserBean aclUser) throws ServiceException;
 	
 	
 	/**

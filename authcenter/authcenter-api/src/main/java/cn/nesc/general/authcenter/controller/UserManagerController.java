@@ -5,7 +5,6 @@ import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerConvertor;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
 import cn.nesc.general.authcenter.bean.usermanager.UserPageQueryVO;
-import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.model.TmUserVO;
 import cn.nesc.general.authcenter.service.UserManagerService;
 import cn.nesc.general.common.bean.AclUserBean;
@@ -90,11 +89,12 @@ public class UserManagerController extends BaseController
     @PostMapping(value = "/updateUserInfo")
     public
     @ResponseBody
-    JsonResult updateUserInfo(TmUserPO user) throws JsonException
+    Boolean updateUserInfo(UserManagerDTO user) throws JsonException
     {
         try
         {
-            return userManagerService.updateUserInfo(user, null, getLoginUser());
+            int count = userManagerService.updateUserInfo(user, null, getLoginUser());
+            return count > 0;
         }
         catch (Exception e)
         {

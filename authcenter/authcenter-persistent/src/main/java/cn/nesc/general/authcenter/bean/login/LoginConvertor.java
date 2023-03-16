@@ -30,4 +30,5 @@ public interface LoginConvertor
     LoginVO toLoginVO(LoginBO loginBO);
 
     UserInfoVO toUserInfoVO(UserManagerBO userManagerBO);
+
 }

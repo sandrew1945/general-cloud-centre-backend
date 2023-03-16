@@ -11,6 +11,7 @@
 
 package cn.nesc.general.authcenter.bean.usermanager;
 
+import cn.nesc.general.common.bean.BO;
 import lombok.Data;
 
 import java.util.Date;
@@ -22,7 +23,7 @@ import java.util.Date;
  * @Date 2023/2/27 14:19
  **/
 @Data
-public class UserManagerBO
+public class UserManagerBO implements BO
 {
     private Integer userId;
 
