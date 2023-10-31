@@ -1,7 +1,6 @@
 package cn.nesc.general.authcenter.service;
 
 
-import cn.nesc.general.core.result.JsonResult;
 import cn.nesc.general.core.exception.ServiceException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +18,7 @@ public interface CommonService
      * @return
      * @throws ServiceException
      */
-    JsonResult fileUploadLocal(String relativePath, MultipartFile file) throws ServiceException;
+    String fileUploadLocal(String relativePath, MultipartFile file) throws ServiceException;
 
     /**
      *  文件上传
@@ -28,7 +27,7 @@ public interface CommonService
      * @return
      * @throws ServiceException
      */
-    JsonResult fileUploadLocal(String relativePath, String filename, String base64File) throws ServiceException;
+    String fileUploadLocal(String relativePath, String filename, String base64File) throws ServiceException;
 
     /**
      *  显示本地图片

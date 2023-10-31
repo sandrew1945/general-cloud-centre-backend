@@ -193,4 +193,19 @@ public class JsonUtil
         return list;
     }
 
+    public static boolean validateJsonStr(String jsonFormStr)
+    {
+        boolean isJsonForm = false;
+        try
+        {
+            mapper.readTree(jsonFormStr);
+            isJsonForm = true;
+        }
+        catch (IOException e)
+        {
+            log.info(jsonFormStr + " doesn't a json form string.");
+        }
+        return isJsonForm;
+    }
+
 }

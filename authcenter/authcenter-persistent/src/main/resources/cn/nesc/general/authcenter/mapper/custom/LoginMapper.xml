@@ -50,9 +50,9 @@
 	</select>
 
 	<select id="getMenuByRole" resultType="cn.nesc.general.authcenter.model.TmMenuPO" parameterType="integer">
-		SELECT tf.* FROM tm_menu tf join tr_role_func_front trff on tf.menu_id = trff.menu_id
+		SELECT tf.* FROM tm_menu tf join tr_role_func trf on tf.menu_id = trf.menu_id
 		WHERE tf.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
-		  AND trff.role_id = #{_parameter}
+		  AND trf.role_id = #{_parameter}
 		ORDER BY func_order
 	</select>
 

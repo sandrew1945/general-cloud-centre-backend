@@ -2,7 +2,7 @@
 <configuration>
 
     <springProperty scope="context" name="applicationName" source="spring.application.name" />
-    <property name="LOG_PATH" value="./logs/gateway/"/>
+    <property name="LOG_PATH" value="./logs/gateway"/>
     <property name="MAX_HISTORY" value="10"/>
     <property name="SIZE_CAP" value="10MB"/>
 

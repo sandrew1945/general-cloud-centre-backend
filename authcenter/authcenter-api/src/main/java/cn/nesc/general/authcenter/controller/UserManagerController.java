@@ -80,7 +80,6 @@ public class UserManagerController extends BaseController
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             throw new JsonException(e.getMessage(), e);
         }
     }
@@ -98,7 +97,6 @@ public class UserManagerController extends BaseController
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             throw new JsonException(e.getMessage(), e);
         }
     }
@@ -106,7 +104,7 @@ public class UserManagerController extends BaseController
     @PostMapping(value = "/deleteUserInfo")
     public
     @ResponseBody
-    JsonResult deleteUserInfo(Integer userId) throws JsonException
+    Boolean deleteUserInfo(Integer userId) throws JsonException
     {
         try
         {
@@ -114,7 +112,6 @@ public class UserManagerController extends BaseController
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             throw new JsonException(e.getMessage(), e);
         }
     }

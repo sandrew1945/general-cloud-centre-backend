@@ -18,7 +18,7 @@
 * </pre>
 ***********************************************************************/
 /**
-* $Id: ActionException.java,v 1.1 2013/07/31 08:32:47 xin.jin Exp $
+* $Id: JsonException.java,v 1.1 2013/07/31 08:32:47 xin.jin Exp $
 */
 package cn.nesc.general.core.exception;
 
@@ -28,31 +28,32 @@ package cn.nesc.general.core.exception;
  * CreateDate  : 2009-11-2
  * @version    :
  */
-public class TooManyResultsException extends BaseException
+public class FeignException extends BaseException
 {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4042594687623349469L;
 
-	public TooManyResultsException()
+	public FeignException()
 	{
 		super();
 	}
 
-	public TooManyResultsException(String message, Throwable cause)
+	public FeignException(String message, Throwable cause)
 	{
 		super(message, cause);
 	}
 
-	public TooManyResultsException(String message)
+	public FeignException(String message)
 	{
 		super(message);
 	}
 
-	public TooManyResultsException(Throwable cause)
+	public FeignException(Throwable cause)
 	{
 		super(cause);
 	}
+
 }

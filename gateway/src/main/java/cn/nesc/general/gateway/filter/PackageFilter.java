@@ -13,11 +13,12 @@ package cn.nesc.general.gateway.filter;
 
 import cn.nesc.general.common.utils.JsonUtil;
 import cn.nesc.general.core.result.JsonResult;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.CharStreams;
-import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,10 +26,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.POST_TYPE;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * @ClassName AuthFilter
@@ -46,7 +46,7 @@ public class PackageFilter extends ZuulFilter
 
     /**
      * 过滤器的类型，它决定过滤器在请求的哪个生命周期中执行。
-     * 这里定义为pre，代表会在请求被路由之前执行。
+     * 这里定义为post，代表会在请求被路由之后执行。
      *
      * @return
      */
@@ -65,7 +65,7 @@ public class PackageFilter extends ZuulFilter
     @Override
     public int filterOrder()
     {
-        return 2;
+        return 10;
     }
 
     /**
@@ -76,10 +76,13 @@ public class PackageFilter extends ZuulFilter
     @Override
     public boolean shouldFilter()
     {
+        // response的content-type如果为application/octet-stream则不拦截
         RequestContext ctx = RequestContext.getCurrentContext();
-        List<Pair<String, String>> zuulResponseHeaders = ctx.getZuulResponseHeaders();
-        boolean hasErrorHeader = zuulResponseHeaders.stream().filter(stringStringPair -> "Has-Error".equals(stringStringPair.first())).findFirst().isPresent();
-        return ctx.getThrowable() == null && !hasErrorHeader;
+        if (ctx.getOriginResponseHeaders().stream().filter(entity -> "Content-Type".equalsIgnoreCase(entity.first())).anyMatch(entity -> entity.second().startsWith("application/octet-stream")))
+        {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -90,33 +93,85 @@ public class PackageFilter extends ZuulFilter
     @Override
     public Object run() throws ZuulException
     {
-        if (!bodyPackage)
-        {
-            return null;
-        }
         logger.debug("package the result ....");
         RequestContext ctx = RequestContext.getCurrentContext();
-        try (final InputStream responseDataStream = ctx.getResponseDataStream()) {
-
-            if(responseDataStream == null) {
-                logger.debug("BODY: {}", "");
-                return null;
+        try (final InputStream responseDataStream = ctx.getResponseDataStream())
+        {
+            if (ctx.getThrowable() != null)
+            {
+                // 处理controller抛出异常的情况
+                JsonResult result = new JsonResult();
+                result.requestFailure(StringUtils.isEmpty(ctx.getThrowable().getMessage()) ? "Internal Server Error" : ctx.getThrowable().getMessage());
+                ctx.setResponseStatusCode(OK.value());
+                ctx.setResponseBody(JsonUtil.javaObject2String(result));
             }
-
-            String responseData = CharStreams.toString(new InputStreamReader(responseDataStream, "UTF-8"));
-            logger.debug("BODY: {}", responseData);
-            // 变成JsonResult格式
-            Object obj = JsonUtil.string2JavaObject(responseData, Object.class);
-            JsonResult result = new JsonResult();
-            result.requestSuccess(obj);
-            ctx.setResponseBody(JsonUtil.javaObject2String(result));
-//            StringBuilder packagedBody = new StringBuilder("{");
-//            packagedBody.append("\"result\": true,");
-//            packagedBody.append("\"msg\": \"\",");
-//            packagedBody.append("\"data\": ").append(responseData);
-//            packagedBody.append("}");
+            else
+            {
+                // 处理controller未抛出异常的情况
+                int statusCode = ctx.getResponseStatusCode();
+                if (responseDataStream == null)
+                {
+                    logger.debug("BODY: {}", "null");
+                    return null;
+                }
+                String responseData = CharStreams.toString(new InputStreamReader(responseDataStream, "UTF-8"));
+                logger.debug("BODY: {}", responseData);
+                if (OK.value() == statusCode)
+                {
+                    // 请求正常
+                    if (!bodyPackage)
+                    {
+                        // 根据设置不需要对结果进行包装
+                        return null;
+                    }
+                    // 验证返回结果是否为json格式，如果controller返回为对象则会序列化为json格式，如果返回基本类型咋不会被序列化为json格式
+                    Object obj = JsonUtil.validateJsonStr(responseData) ? JsonUtil.string2JavaObject(responseData, Object.class) : responseData;
+                    // 变成JsonResult格式
+                    JsonResult result = new JsonResult();
+                    result.requestSuccess(obj);
+                    ctx.setResponseBody(JsonUtil.javaObject2String(result));
+                }
+                else if (NOT_FOUND.value() == statusCode)
+                {
+                    // 请求异常
+                    // 变成JsonResult格式
+                    JsonResult result = new JsonResult();
+                    result.requestFailure("Path " + ctx.getRequest().getRequestURI() + " Not Found");
+                    ctx.setResponseStatusCode(OK.value());
+                    ctx.setResponseBody(JsonUtil.javaObject2String(result));
+                }
+                else if (FORBIDDEN.value() == statusCode)
+                {
+                    // 请求异常
+                    // 变成JsonResult格式
+                    JsonResult result = new JsonResult();
+                    result.requestFailure("Path " + ctx.getRequest().getRequestURI() + " is Forbidden");
+                    ctx.setResponseStatusCode(OK.value());
+                    ctx.setResponseBody(JsonUtil.javaObject2String(result));
+                }
+                else if (BAD_REQUEST.value() == statusCode)
+                {
+                    // 请求异常
+                    // 变成JsonResult格式
+                    JsonResult result = new JsonResult();
+                    result.requestFailure("Path " + ctx.getRequest().getRequestURI() + " is Bad Request");
+                    ctx.setResponseStatusCode(OK.value());
+                    ctx.setResponseBody(JsonUtil.javaObject2String(result));
+                }
+                else
+                {
+                    // 请求异常
+                    JsonNode node = JsonUtil.string2JsonObject(responseData);
+                    // 变成JsonResult格式
+                    JsonResult result = new JsonResult();
+                    result.requestFailure(node.get("message").asText("Internal Server Error"));
+                    ctx.setResponseStatusCode(OK.value());
+                    ctx.setResponseBody(JsonUtil.javaObject2String(result));
+                }
+            }
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             throw new ZuulException(e, INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
         return null;

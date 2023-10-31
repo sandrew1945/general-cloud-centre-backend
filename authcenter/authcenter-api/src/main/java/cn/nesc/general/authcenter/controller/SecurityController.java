@@ -22,6 +22,7 @@ public class SecurityController extends BaseController
         try
         {
             AclUserBean loginUser = getLoginUser();
+//            System.out.println(1/0);
             return loginUser;
         }
         catch (Exception e)

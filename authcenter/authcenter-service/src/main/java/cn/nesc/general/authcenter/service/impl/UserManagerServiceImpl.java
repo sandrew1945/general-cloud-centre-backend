@@ -129,11 +129,10 @@ public class UserManagerServiceImpl implements UserManagerService
     }
 
     @Override
-    public JsonResult deleteUserInfo(Integer userId, AclUserBean aclUser) throws ServiceException
+    public Boolean deleteUserInfo(Integer userId, AclUserBean aclUser) throws ServiceException
     {
         try
         {
-            JsonResult result = new JsonResult();
             TmUserPO updateUser = new TmUserPO();
             updateUser.setUserId(userId);
             updateUser.setIsDelete(Fixcode.IF_TYPE_YES.getCode());
@@ -142,18 +141,17 @@ public class UserManagerServiceImpl implements UserManagerService
             int count = tmUserPOMapper.updateByPrimaryKeySelective(updateUser);
             if (count > 0)
             {
-                result.requestSuccess(true);
+                return true;
             }
             else
             {
-                result.requestFailure("删用户失败");
+                throw new ServiceException("要删除的用户不存在");
             }
-            return result;
         }
         catch (Exception e)
         {
             log.error(e.getMessage(), e);
-            throw new ServiceException("删除用户失败", e);
+            throw new ServiceException(e.getMessage(), e);
         }
     }
 

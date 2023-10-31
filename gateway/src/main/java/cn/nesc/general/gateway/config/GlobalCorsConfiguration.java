@@ -1,4 +1,15 @@
-package cn.nesc.general.authcenter.config;
+/**
+ * Copyright (C), 2015-2023, 东北证券股份有限公司
+ * FileName: GlobalCorsConfiguration
+ * Author:   summer
+ * Date:     2023/10/30 10:46
+ * Description:
+ * History:
+ * <author>          <time>          <version>          <desc>
+ * 作者姓名           修改时间           版本号              描述
+ **/
+
+package cn.nesc.general.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,9 +18,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- *   跨域AJAX请求过滤器
- * Created by summer on 2019/3/30.
- */
+ * @ClassName GlobalCorsConfiguration
+ * @Description
+ * @Author summer
+ * @Date 2023/10/30 10:46
+ **/
 @Configuration
 public class GlobalCorsConfiguration
 {

@@ -2,23 +2,17 @@ package cn.nesc.general.common.controller;
 
 
 import cn.nesc.general.common.bean.AclUserBean;
-import cn.nesc.general.core.exception.BaseException;
-import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,57 +34,57 @@ public class BaseController
      * @param ex
      * @return
      */
-    @ExceptionHandler(value = ServletRequestBindingException.class)
-    public JsonResult errorBindingHandler(HttpServletResponse response, Exception ex) {
-        // 服务发生异常，在response的header中添加自定义头信息 Has-Error=true，方便其他服务判断是否请求成功
-        response.setHeader(ERROR_TAG, "true");
-        JsonResult result = new JsonResult();
-        result.requestFailure(ex.getMessage());
-        return result;
-    }
+//    @ExceptionHandler(value = ServletRequestBindingException.class)
+//    public JsonResult errorBindingHandler(HttpServletResponse response, Exception ex) {
+//        // 服务发生异常，在response的header中添加自定义头信息 Has-Error=true，方便其他服务判断是否请求成功
+//        response.setHeader(ERROR_TAG, "true");
+//        JsonResult result = new JsonResult();
+//        result.requestFailure(ex.getMessage());
+//        return result;
+//    }
 
-    @ExceptionHandler(value = AuthorizationException.class)
-    public JsonResult noAuthorization(HttpServletResponse response, Exception ex) {
-        response.setHeader(ERROR_TAG, "true");
-        JsonResult result = new JsonResult();
-        result.requestFailure("您无权访问该资源，请联系系统管理员");
-        return result;
-    }
+//    @ExceptionHandler(value = AuthorizationException.class)
+//    public JsonResult noAuthorization(HttpServletResponse response, Exception ex) {
+//        response.setHeader(ERROR_TAG, "true");
+//        JsonResult result = new JsonResult();
+//        result.requestFailure("您无权访问该资源，请联系系统管理员");
+//        return result;
+//    }
 
     /**
      *  处理请求动作异常
      * @param ex
      * @return
      */
-    @ExceptionHandler(value = BaseException.class)
-    public JsonResult errorActionHandler(HttpServletResponse response, Exception ex) {
-        response.setHeader(ERROR_TAG, "true");
-        JsonResult result = new JsonResult();
-        while (null != ex)
-        {
-            Throwable throwable = ex.getCause();
-            if (null == throwable)
-            {
-                break;
-            }
-            ex = (Exception) throwable;
-        }
-        result.requestFailure(ex.getMessage());
-        return result;
-    }
+//    @ExceptionHandler(value = BaseException.class)
+//    public JsonResult errorActionHandler(HttpServletResponse response, Exception ex) {
+//        response.setHeader(ERROR_TAG, "true");
+//        JsonResult result = new JsonResult();
+//        while (null != ex)
+//        {
+//            Throwable throwable = ex.getCause();
+//            if (null == throwable)
+//            {
+//                break;
+//            }
+//            ex = (Exception) throwable;
+//        }
+//        result.requestFailure(ex.getMessage());
+//        return result;
+//    }
 
     /**
      *  未知异常处理
-     * @param ex
+     * @param
      * @return
      */
-    @ExceptionHandler(value = Exception.class)
-    public JsonResult unknowExceptionHandler(HttpServletResponse response, Exception ex) {
-        response.setHeader(ERROR_TAG, "true");
-        JsonResult result = new JsonResult();
-        result.requestFailure(ex.getMessage());
-        return result;
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    public JsonResult unknowExceptionHandler(HttpServletResponse response, Exception ex) {
+//        response.setHeader(ERROR_TAG, "true");
+//        JsonResult result = new JsonResult();
+//        result.requestFailure(ex.getMessage());
+//        return result;
+//    }
 
     @InitBinder
     protected void ininBinder(WebDataBinder binder)

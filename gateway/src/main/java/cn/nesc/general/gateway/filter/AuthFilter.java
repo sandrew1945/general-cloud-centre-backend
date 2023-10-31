@@ -39,7 +39,7 @@ public class AuthFilter extends ZuulFilter
 {
     private Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
-    @Value("${gateway.manager.whitelist}")
+    @Value("${gateway.request.whitelist}")
     private Set<String> whiteList;
 
     @Resource

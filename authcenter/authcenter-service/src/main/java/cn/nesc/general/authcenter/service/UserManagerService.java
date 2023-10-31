@@ -50,7 +50,7 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult deleteUserInfo(Integer userId, AclUserBean aclUser) throws ServiceException;
+	Boolean deleteUserInfo(Integer userId, AclUserBean aclUser) throws ServiceException;
 	
 	/**
 	 * 根据用户id查询用户信息

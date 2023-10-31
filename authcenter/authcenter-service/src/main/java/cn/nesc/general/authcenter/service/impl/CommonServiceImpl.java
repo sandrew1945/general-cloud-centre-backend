@@ -2,7 +2,6 @@ package cn.nesc.general.authcenter.service.impl;
 
 
 import cn.nesc.general.authcenter.service.CommonService;
-import cn.nesc.general.core.result.JsonResult;
 import cn.nesc.general.common.utils.LocalFileUtil;
 import cn.nesc.general.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +26,10 @@ public class CommonServiceImpl implements CommonService
     private String basePath;
 
     @Override
-    public JsonResult fileUploadLocal(String relativePath, MultipartFile file) throws ServiceException
+    public String fileUploadLocal(String relativePath, MultipartFile file) throws ServiceException
     {
         try
         {
-            JsonResult result = new JsonResult();
             LocalFileUtil fileUtil = new LocalFileUtil();
             String randomFileName = fileUtil.createRandomFileName(file.getOriginalFilename());
             if (basePath.endsWith("/"))
@@ -44,7 +42,7 @@ public class CommonServiceImpl implements CommonService
             }
             fileUtil.upload(basePath + relativePath, randomFileName, file.getInputStream());
             String filePath = (relativePath.endsWith(File.separator) ? relativePath + randomFileName : relativePath + File.separator + randomFileName);
-            return result.requestSuccess(filePath);
+            return filePath;
         }
         catch (Exception e)
         {
@@ -79,16 +77,15 @@ public class CommonServiceImpl implements CommonService
     }
 
     @Override
-    public JsonResult fileUploadLocal(String relativePath, String filename, String base64File) throws ServiceException
+    public String fileUploadLocal(String relativePath, String filename, String base64File) throws ServiceException
     {
         try
         {
-            JsonResult result = new JsonResult();
             LocalFileUtil fileUtil = new LocalFileUtil();
             String randomFileName = fileUtil.createRandomFileName(filename);
             String filePath = (relativePath.endsWith(File.separator) ? relativePath + randomFileName : relativePath + File.separator + randomFileName);
             Files.write(Paths.get(basePath + filePath), Base64.getDecoder().decode(base64File), StandardOpenOption.CREATE);
-            return result.requestSuccess(filePath);
+            return filePath;
         }
         catch (Exception e)
         {
