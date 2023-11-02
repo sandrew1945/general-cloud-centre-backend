@@ -34,17 +34,16 @@ import cn.nesc.general.authcenter.mapper.TrUserRolePOMapper;
 import cn.nesc.general.authcenter.mapper.custom.UserManagerMapper;
 import cn.nesc.general.authcenter.model.*;
 import cn.nesc.general.authcenter.service.UserManagerService;
-import cn.nesc.general.common.dictionary.Fixcode;
-import cn.nesc.general.common.encrypt.MD5Encrypt;
-import cn.nesc.general.common.utils.MagicOOO;
 import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.common.bean.PageResult;
+import cn.nesc.general.common.dictionary.Fixcode;
+import cn.nesc.general.common.encrypt.MD5Encrypt;
+import cn.nesc.general.common.mybatis.PageQueryBuilder;
+import cn.nesc.general.common.utils.MagicOOO;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.exception.TooManyResultsException;
-import cn.nesc.general.common.mybatis.PageQueryBuilder;
 import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -228,9 +227,13 @@ public class UserManagerServiceImpl implements UserManagerService
             updateUser.setUpdateDate(new Date());
 
             //如果用户没有填写密码选项，则密码不改变
-            if (StringUtils.isNotEmpty(user.getPassword()))
+            if (user.getPassword().length() > 1)
             {
                 updateUser.setPassword(MD5Encrypt.MD5Encode(user.getPassword()));
+            }
+            else
+            {
+                updateUser.setPassword(null);
             }
             return tmUserPOMapper.updateByPrimaryKeySelective(updateUser);
         }

@@ -83,14 +83,8 @@ public abstract class BaseInterceptor implements Interceptor, Serializable
 		}
 		if (dialect == null)
 		{
-			throw new RuntimeException("mybatis dialect error.");
+			throw new RuntimeException("dialect init error.");
 		}
 		DIALECT = dialect;
-		//        _SQL_PATTERN = p.getProperty("sqlPattern");
-		//        _SQL_PATTERN = Global.getConfig("mybatis.pagePattern");
-		//        if (StringUtils.isEmpty(_SQL_PATTERN)) {
-		//            throw new RuntimeException("sqlPattern property is not found!");
-		//        }
-		//        System.out.println(dbType);
 	}
 }
