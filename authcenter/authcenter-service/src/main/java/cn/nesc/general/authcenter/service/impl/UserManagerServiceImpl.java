@@ -26,9 +26,12 @@
 package cn.nesc.general.authcenter.service.impl;
 
 
+import cn.nesc.general.authcenter.bean.RoleBean;
+import cn.nesc.general.authcenter.bean.rolemanager.RoleManagerConvertor;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerConvertor;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
+import cn.nesc.general.authcenter.mapper.TmRolePOMapper;
 import cn.nesc.general.authcenter.mapper.TmUserPOMapper;
 import cn.nesc.general.authcenter.mapper.TrUserRolePOMapper;
 import cn.nesc.general.authcenter.mapper.custom.UserManagerMapper;
@@ -42,7 +45,6 @@ import cn.nesc.general.common.mybatis.PageQueryBuilder;
 import cn.nesc.general.common.utils.MagicOOO;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.exception.TooManyResultsException;
-import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
@@ -77,6 +79,12 @@ public class UserManagerServiceImpl implements UserManagerService
 
     @Resource
     private UserManagerConvertor userManagerConvertor;
+
+    @Resource
+    private RoleManagerConvertor roleManagerConvertor;
+
+    @Resource
+    private TmRolePOMapper tmRolePOMapper;
 
     @Override
     public PageResult<UserManagerBO> userManagerPageQuery(UserManagerDTO condition, int limit, int curPage) throws ServiceException
@@ -245,11 +253,12 @@ public class UserManagerServiceImpl implements UserManagerService
     }
 
     @Override
-    public List<TmRolePO> getRelationRolesByUserId(Integer userId) throws ServiceException
+    public List<RoleBean> getRelationRolesByUserId(Integer userId) throws ServiceException
     {
         try
         {
-            return userManagerMapper.queryRelationRole(userId);
+            List<TmRolePO> rolePOS = userManagerMapper.queryRelationRole(userId);
+            return roleManagerConvertor.toRoleBOList(rolePOS);
         }
         catch (Exception e)
         {
@@ -259,11 +268,10 @@ public class UserManagerServiceImpl implements UserManagerService
     }
 
     @Override
-    public JsonResult deleteRoleRelation(Integer userId, Integer roleId) throws ServiceException
+    public boolean deleteRoleRelation(Integer userId, Integer roleId) throws ServiceException
     {
         try
         {
-            JsonResult result = new JsonResult();
             TrUserRolePOExample example = new TrUserRolePOExample();
             TrUserRolePOExample.Criteria criteria = example.createCriteria();
             criteria.andUserIdEqualTo(userId);
@@ -271,28 +279,27 @@ public class UserManagerServiceImpl implements UserManagerService
             int count = trUserRolePOMapper.deleteByExample(example);
             if (count > 0)
             {
-                result.requestSuccess(true);
+                return true;
             }
             else
             {
-                result.requestFailure("删除角色失败");
+                return false;
             }
-            return result;
         }
         catch (Exception e)
         {
             log.error(e.getMessage(), e);
-            throw new ServiceException("删除角色失败", e);
+            throw new ServiceException("删除用户角色失败", e);
         }
     }
 
     @Override
-    public List<TmRolePO> getUnRelationRoles(AclUserBean aclUser) throws ServiceException
+    public List<RoleBean> getUnRelationRoles(AclUserBean aclUser) throws ServiceException
     {
         try
         {
 
-            List<TmRolePO> roles = userManagerMapper.getRoleExistOwn(aclUser);
+            List<RoleBean> roles = roleManagerConvertor.toRoleBOList(userManagerMapper.getRoleExistOwn(aclUser));
             return roles;
         }
         catch (Exception e)
@@ -304,14 +311,23 @@ public class UserManagerServiceImpl implements UserManagerService
     }
 
     @Override
-    public JsonResult createRelation(Integer userId, String rolesStr, AclUserBean aclUser) throws ServiceException
+    public void createRelation(Integer userId, String rolesStr, AclUserBean aclUser) throws ServiceException
     {
         try
         {
+            // 验证用户ID有效
+            if (null == tmUserPOMapper.selectByPrimaryKey(userId))
+            {
+                throw new ServiceException("用户不存在, userId: " + userId);
+            }
             String[] roles = rolesStr.split(",");
-            List<TrUserRolePO> list = new ArrayList<>();
             for (String roleId : roles)
             {
+                // 验证角色
+                if (null == tmRolePOMapper.selectByPrimaryKey(new Integer(roleId)))
+                {
+                    throw new ServiceException("角色不存在, roleId: " + roleId);
+                }
                 TrUserRolePO userRole = new TrUserRolePO();
                 userRole.setUserId(userId);
                 userRole.setRoleId(new Integer(roleId));
@@ -319,21 +335,18 @@ public class UserManagerServiceImpl implements UserManagerService
                 userRole.setCreateDate(new Date());
                 trUserRolePOMapper.insertSelective(userRole);
             }
-            JsonResult ajaxResult = new JsonResult();
-            return ajaxResult.requestSuccess();
         }
         catch (Exception e)
         {
             log.error(e.getMessage(), e);
-            throw new ServiceException("添加角色失败", e);
+            throw new ServiceException(e.getMessage(), e);
         }
 
     }
 
     @Override
-    public JsonResult getAvailableUserList() throws ServiceException
+    public List<TmUserPO> getAvailableUserList() throws ServiceException
     {
-        JsonResult result = new JsonResult();
         try
         {
             TmUserPOExample example = new TmUserPOExample();
@@ -344,13 +357,12 @@ public class UserManagerServiceImpl implements UserManagerService
 
             if (null != list && list.size() > 0)
             {
-                result.requestSuccess(list);
+                return list;
             }
             else
             {
-                result.requestFailure("查询用户失败");
+                throw new ServiceException("有效用户不存在");
             }
-            return result;
         }
         catch (Exception e)
         {
@@ -360,19 +372,15 @@ public class UserManagerServiceImpl implements UserManagerService
     }
 
     @Override
-    public JsonResult updatePassword(Integer userId, String originPwd, String newPwd, AclUserBean loginUser) throws ServiceException
+    public boolean updatePassword(Integer userId, String originPwd, String newPwd, AclUserBean loginUser) throws ServiceException
     {
-        JsonResult result = new JsonResult();
         try
         {
             // 验证原始密码是否正确
-
-
-
             TmUserPO userPO = tmUserPOMapper.selectByPrimaryKey(userId);
             if (null != userPO && !MD5Encrypt.MD5Encode(originPwd).equals(userPO.getPassword()))
             {
-                result.requestFailure("输入的密码不正确");
+                throw new ServiceException("输入的密码不正确");
             }
             else
             {
@@ -385,14 +393,13 @@ public class UserManagerServiceImpl implements UserManagerService
                 int count = tmUserPOMapper.updateByPrimaryKeySelective(updateUser);
                 if (count > 0)
                 {
-                    result.requestSuccess(count);
+                    return true;
                 }
                 else
                 {
-                    result.requestSuccess("修改密码失败");
+                    return false;
                 }
             }
-            return result;
         }
         catch (Exception e)
         {

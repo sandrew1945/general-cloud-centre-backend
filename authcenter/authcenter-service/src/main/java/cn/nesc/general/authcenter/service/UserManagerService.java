@@ -1,13 +1,12 @@
 package cn.nesc.general.authcenter.service;
 
-import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
+import cn.nesc.general.authcenter.bean.RoleBean;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
-import cn.nesc.general.authcenter.model.TmRolePO;
+import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.common.bean.PageResult;
 import cn.nesc.general.core.exception.ServiceException;
-import cn.nesc.general.core.result.JsonResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -89,7 +88,7 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	List<TmRolePO> getRelationRolesByUserId(Integer userId) throws ServiceException;
+	List<RoleBean> getRelationRolesByUserId(Integer userId) throws ServiceException;
 	
 	/**
 	 * 
@@ -100,7 +99,7 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult deleteRoleRelation(Integer userId, Integer roleId) throws ServiceException;
+	boolean deleteRoleRelation(Integer userId, Integer roleId) throws ServiceException;
 	
 	/**
 	 * 
@@ -110,7 +109,7 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	List<TmRolePO> getUnRelationRoles(AclUserBean aclUser) throws ServiceException;
+	List<RoleBean> getUnRelationRoles(AclUserBean aclUser) throws ServiceException;
 	
 	/**
 	 * 
@@ -121,14 +120,14 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult createRelation(Integer userId, String rolesStr, AclUserBean aclUser) throws ServiceException;
+	void createRelation(Integer userId, String rolesStr, AclUserBean aclUser) throws ServiceException;
 
 	/**
 	 *  获取全部有效用户
 	 * @return
 	 * @throws ServiceException
      */
-	JsonResult getAvailableUserList() throws ServiceException;
+	List<TmUserPO> getAvailableUserList() throws ServiceException;
 
 	/**
 	 *  更新密码
@@ -138,7 +137,7 @@ public interface UserManagerService
 	 * @return
 	 * @throws ServiceException
      */
-	JsonResult updatePassword(Integer userId, String originPwd, String newPwd, AclUserBean loginUser) throws ServiceException;
+	boolean updatePassword(Integer userId, String originPwd, String newPwd, AclUserBean loginUser) throws ServiceException;
 
 	/**
 	 *  用户代码验证

@@ -16,10 +16,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,8 +55,6 @@ public class LoginControllerUnitTest extends InitForUnitTest
     @DisplayName("获取用户信息Controller测试")
     public void getUserInfoControllerTestProcess() throws Exception
     {
-        MultiValueMap<String, String> heads = new LinkedMultiValueMap<>();
-        heads.put("sid", Arrays.asList(new String[] {token}));
         restRequest("/userInfo", HttpMethod.GET, heads, null, statusOK(), jsonContentOK("$.userCode", "admin"));
     }
 
@@ -67,8 +62,6 @@ public class LoginControllerUnitTest extends InitForUnitTest
     @DisplayName("获取用户菜单Controller测试")
     public void getMenuByRoleControllerTestProcess() throws Exception
     {
-        MultiValueMap<String, String> heads = new LinkedMultiValueMap<>();
-        heads.put("sid", Arrays.asList(new String[] {token}));
 
         Map<String, String> params = new HashMap<>();
         params.put("roleId", "1");

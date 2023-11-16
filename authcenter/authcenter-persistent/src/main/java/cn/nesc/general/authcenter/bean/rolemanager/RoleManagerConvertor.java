@@ -11,6 +11,7 @@
 
 package cn.nesc.general.authcenter.bean.rolemanager;
 
+import cn.nesc.general.authcenter.bean.RoleBean;
 import cn.nesc.general.authcenter.model.TmRolePO;
 import cn.nesc.general.authcenter.model.TmRoleVO;
 import org.mapstruct.Mapper;
@@ -31,5 +32,7 @@ public interface RoleManagerConvertor
     @Mapping(source = "tmRolePO.roleStatus", target = "roleStatus")
     TmRoleVO toRoleVO(TmRolePO tmRolePO);
 
-    List<TmRoleVO> toRoleVOList(List<TmRolePO> roles);
+    List<TmRoleVO> toRoleVOList(List<RoleBean> roleBeans);
+
+    List<RoleBean> toRoleBOList(List<TmRolePO> roles);
 }

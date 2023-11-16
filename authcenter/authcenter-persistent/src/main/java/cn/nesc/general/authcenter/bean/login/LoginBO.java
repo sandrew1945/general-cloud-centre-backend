@@ -11,6 +11,7 @@
 
 package cn.nesc.general.authcenter.bean.login;
 
+import cn.nesc.general.common.bean.BO;
 import lombok.Data;
 
 /**
@@ -20,7 +21,7 @@ import lombok.Data;
  * @Date 2023/3/1 13:52
  **/
 @Data
-public class LoginBO
+public class LoginBO implements BO
 {
     private Integer userId;
 

@@ -11,15 +11,15 @@
 
 package cn.nesc.general.authcenter;
 
+import cn.nesc.general.common.utils.JsonUtil;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.util.AssertionErrors;
+import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
@@ -121,6 +121,137 @@ public class BaseUnitTest
 
     /**
      * @Author summer
+     * @Description 模拟发起请求-json参数
+     * @Date 16:15 2023/11/1
+     * @Param uri           请求uri
+     * @Param httpMethod    请求方式
+     * @Param heads         请求头信息
+     * @Param requestBody   请求body
+     * @Param matcher       断言比较器
+     * @return void
+     **/
+    protected void restRequest(String uri, HttpMethod httpMethod, MultiValueMap heads, Object requestBody, ResultMatcher... matcher) throws Exception
+    {
+        RequestBuilder builder = null;
+        switch (httpMethod)
+        {
+            case GET:
+                MockHttpServletRequestBuilder getBulider = MockMvcRequestBuilders.get(uri);
+                if (null != heads)
+                {
+                    getBulider.headers(new HttpHeaders(heads));
+                }
+                if (null != requestBody)
+                {
+                    getBulider.contentType(MediaType.APPLICATION_JSON).content(JsonUtil.javaObject2String(requestBody));
+                }
+                builder = getBulider;
+                break;
+            case POST:
+                MockHttpServletRequestBuilder postBulider = MockMvcRequestBuilders.post(uri);
+                if (null != heads)
+                {
+                    postBulider.headers(new HttpHeaders(heads));
+                }
+                if (null != requestBody)
+                {
+                    postBulider.contentType(MediaType.APPLICATION_JSON).content(JsonUtil.javaObject2String(requestBody));
+                }
+                builder = postBulider;
+                break;
+            case PUT:
+                MockHttpServletRequestBuilder putBulider = MockMvcRequestBuilders.put(uri);
+                if (null != heads)
+                {
+                    putBulider.headers(new HttpHeaders(heads));
+                }
+                if (null != requestBody)
+                {
+                    putBulider.contentType(MediaType.APPLICATION_JSON).content(JsonUtil.javaObject2String(requestBody));
+                }
+                builder = putBulider;
+                break;
+            case DELETE:
+                MockHttpServletRequestBuilder delBulider = MockMvcRequestBuilders.delete(uri);
+                if (null != heads)
+                {
+                    delBulider.contentType(MediaType.APPLICATION_JSON).headers(new HttpHeaders(heads));
+                }
+                if (null != requestBody)
+                {
+                    delBulider.content(JsonUtil.javaObject2String(requestBody));
+                }
+                builder = delBulider;
+                break;
+            default:
+                throw new Exception("不支持的请求类型");
+        }
+        ResultActions actions = mockMvc.perform(builder).andDo(print());
+        for (ResultMatcher resultMatcher : matcher)
+        {
+            actions.andExpect(resultMatcher);
+        }
+    }
+
+    /**
+     * @Author summer
+     * @Description 模拟发起请求-pathVariables参数
+     * @Date 16:15 2023/11/1
+     * @Param uriAndPathVariables   请求uri及pathVariables
+     * @Param httpMethod            请求方式
+     * @Param heads                 请求头信息
+     * @Param matcher               断言比较器
+     * @return void
+     **/
+    protected void restRequest(UriWithPathVariable uriAndPathVariables, HttpMethod httpMethod, MultiValueMap heads, ResultMatcher... matcher) throws Exception
+    {
+        RequestBuilder builder = null;
+        switch (httpMethod)
+        {
+            case GET:
+                MockHttpServletRequestBuilder getBulider = MockMvcRequestBuilders.get(uriAndPathVariables.getUri(), uriAndPathVariables.getPathVariables());
+                if (null != heads)
+                {
+                    getBulider.headers(new HttpHeaders(heads));
+                }
+                builder = getBulider;
+                break;
+            case POST:
+                MockHttpServletRequestBuilder postBulider = MockMvcRequestBuilders.post(uriAndPathVariables.getUri(), uriAndPathVariables.getPathVariables());
+                if (null != heads)
+                {
+                    postBulider.headers(new HttpHeaders(heads));
+                }
+                builder = postBulider;
+                break;
+            case PUT:
+                MockHttpServletRequestBuilder putBulider = MockMvcRequestBuilders.put(uriAndPathVariables.getUri(), uriAndPathVariables.getPathVariables());
+                if (null != heads)
+                {
+                    putBulider.headers(new HttpHeaders(heads));
+                }
+                builder = putBulider;
+                break;
+            case DELETE:
+                MockHttpServletRequestBuilder delBulider = MockMvcRequestBuilders.delete(uriAndPathVariables.getUri(), uriAndPathVariables.getPathVariables());
+                if (null != heads)
+                {
+                    delBulider.contentType(MediaType.APPLICATION_JSON).headers(new HttpHeaders(heads));
+                }
+                builder = delBulider;
+                break;
+            default:
+                throw new Exception("不支持的请求类型");
+        }
+        ResultActions actions = mockMvc.perform(builder).andDo(print());
+        for (ResultMatcher resultMatcher : matcher)
+        {
+            actions.andExpect(resultMatcher);
+        }
+    }
+
+    /**
+     * @Author summer
      * @Description 返回状态正常Matcher
      * @Date 15:53 2023/11/1
      * @Param []
@@ -129,6 +260,21 @@ public class BaseUnitTest
     protected ResultMatcher statusOK()
     {
         return status().isOk();
+    }
+
+    protected ResultMatcher statusError5XX()
+    {
+        return status().is5xxServerError();
+    }
+
+    protected ResultMatcher statusError4XX()
+    {
+        return status().is4xxClientError();
+    }
+
+    protected ResultMatcher statusInternalServerError()
+    {
+        return status().isInternalServerError();
     }
 
     /**
@@ -150,9 +296,9 @@ public class BaseUnitTest
      * @Param [path, expectValue]
      * @return org.springframework.test.web.servlet.ResultMatcher
      **/
-    protected ResultMatcher jsonContentOK(String path, String expectValue)
+    protected ResultMatcher jsonContentOK(String path, String expectedValue)
     {
-        return jsonPath(path).value(expectValue);
+        return jsonPath(path).value(expectedValue);
     }
 
     /**
@@ -191,7 +337,68 @@ public class BaseUnitTest
         return jsonPath(path).isArray();
     }
 
+    /**
+     * @Author summer
+     * @Description 返回的基础类型符合预期
+     * @Date 14:41 2023/11/2
+     * @Param [expectedValue]
+     * @return org.springframework.test.web.servlet.ResultMatcher
+     **/
+    protected ResultMatcher primitiveContentOK(String expectedValue)
+    {
+        return content().string(expectedValue);
+    }
+
+    protected ResultMatcher throwException(Class<? extends Exception> exceptionClz)
+    {
+        return new ResultMatcher()
+        {
+            @Override
+            public void match(MvcResult mvcResult) throws Exception
+            {
+                AssertionErrors.assertEquals("Throw exception", mvcResult.getResolvedException().getClass().getName(), exceptionClz.getName());
+            }
+        };
+    }
 
 
+    /**
+     * @Author summer
+     * @Description
+     * @Date 15:45 2023/11/2
+     * @Param 
+     * @return 
+     **/
+    protected class UriWithPathVariable
+    {
+        private String uri;
 
+        private String[] pathVariables;
+
+        public UriWithPathVariable(String uri, String... pathVariables)
+        {
+            this.uri = uri;
+            this.pathVariables = pathVariables;
+        }
+
+        public String getUri()
+        {
+            return uri;
+        }
+
+        public void setUri(String uri)
+        {
+            this.uri = uri;
+        }
+
+        public String[] getPathVariables()
+        {
+            return pathVariables;
+        }
+
+        public void setPathVariables(String[] pathVariables)
+        {
+            this.pathVariables = pathVariables;
+        }
+    }
 }

@@ -16,11 +16,16 @@ import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.LoginService;
 import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.annotation.Resource;
+
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -38,10 +43,13 @@ public class InitForUnitTest extends BaseUnitTest
 {
     protected String token;
 
+    protected MultiValueMap<String, String> heads;
+
     @Resource
     private LoginService loginService;
 
     @Before
+    @Order(1)
     @DisplayName("初始化")
     public void initLoginTestProcess() throws Exception
     {
@@ -49,8 +57,13 @@ public class InitForUnitTest extends BaseUnitTest
         user.setUserCode("admin");
         user.setPassword("123456");
         LoginBO loginBO = loginService.login(user);
-        System.out.println(loginBO.getToken());
+        System.out.println("init for token =========> " + loginBO.getToken());
         assertThat(loginBO.getToken(), notNullValue());
         token = loginBO.getToken();
+        System.out.println("add token in header, token:" + token);
+        heads = new LinkedMultiValueMap<>();
+        heads.put("sid", Arrays.asList(new String[] {token}));
+
     }
+
 }

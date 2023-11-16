@@ -1,10 +1,13 @@
 package cn.nesc.general.authcenter.controller;
 
 
+import cn.nesc.general.authcenter.bean.rolemanager.RoleManagerConvertor;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerConvertor;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
 import cn.nesc.general.authcenter.bean.usermanager.UserPageQueryVO;
+import cn.nesc.general.authcenter.model.TmRoleVO;
+import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.model.TmUserVO;
 import cn.nesc.general.authcenter.service.UserManagerService;
 import cn.nesc.general.common.bean.AclUserBean;
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,6 +32,9 @@ public class UserManagerController extends BaseController
 
     @Resource
     private UserManagerConvertor userManagerConvertor;
+
+    @Resource
+    private RoleManagerConvertor roleManagerConvertor;
 
     @PostMapping(value = "/userManagerPageQuery")
     public
@@ -84,6 +91,21 @@ public class UserManagerController extends BaseController
         }
     }
 
+    @PostMapping(value = "/createUserInfoForJsonBody")
+    public
+    @ResponseBody
+    Boolean createUserInfoForJsonBody(@RequestBody UserManagerDTO user) throws JsonException
+    {
+        try
+        {
+            return userManagerService.createUserInfo(user, null, getLoginUser());
+        }
+        catch (Exception e)
+        {
+            throw new JsonException(e.getMessage(), e);
+        }
+    }
+
 
     @PostMapping(value = "/updateUserInfo")
     public
@@ -116,15 +138,28 @@ public class UserManagerController extends BaseController
         }
     }
 
-    @GetMapping(value = "/queryRelationRoles")
+    @DeleteMapping(value = "/deleteUserInfo/{userId}")
     public
     @ResponseBody
-    JsonResult queryRelationRoles(Integer userId) throws JsonException
+    Boolean deleteUserInfoByPathVariable(@PathVariable Integer userId) throws JsonException
     {
-        JsonResult result = new JsonResult();
         try
         {
-            return result.requestSuccess(userManagerService.getRelationRolesByUserId(userId));
+            return userManagerService.deleteUserInfo(userId, getLoginUser());
+        }
+        catch (Exception e)
+        {
+            throw new JsonException(e.getMessage(), e);
+        }
+    }
+
+    @GetMapping(value = "/queryRelationRoles")
+    public
+    @ResponseBody List<TmRoleVO> queryRelationRoles(Integer userId) throws JsonException
+    {
+        try
+        {
+            return roleManagerConvertor.toRoleVOList(userManagerService.getRelationRolesByUserId(userId));
         }
         catch (Exception e)
         {
@@ -137,7 +172,7 @@ public class UserManagerController extends BaseController
     @PostMapping(value = "/deleteRoleRelation")
     public
     @ResponseBody
-    JsonResult deleteRoleRelation(Integer userId, Integer roleId) throws JsonException
+    boolean deleteRoleRelation(Integer userId, Integer roleId) throws JsonException
     {
         try
         {
@@ -145,7 +180,7 @@ public class UserManagerController extends BaseController
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             throw new JsonException(e.getMessage(), e);
         }
     }
@@ -153,15 +188,14 @@ public class UserManagerController extends BaseController
     @PostMapping(value = "/queryUnRelationRoles")
     public
     @ResponseBody
-    JsonResult queryUnRelationRoles(Integer userId, String roleName) throws JsonException
+    List<TmRoleVO> queryUnRelationRoles(Integer userId, String roleName) throws JsonException
     {
-        JsonResult result = new JsonResult();
         try
         {
             AclUserBean aclUser = new AclUserBean();
             aclUser.setUserId(userId);
             aclUser.setRoleName(roleName);
-            return result.requestSuccess(userManagerService.getUnRelationRoles(aclUser));
+            return roleManagerConvertor.toRoleVOList(userManagerService.getUnRelationRoles(aclUser));
         }
         catch (Exception e)
         {
@@ -174,21 +208,21 @@ public class UserManagerController extends BaseController
     @PostMapping(value = "/createRelation")
     public
     @ResponseBody
-    JsonResult createRelation(Integer userId, String rolesStr) throws JsonException
+    void createRelation(Integer userId, String rolesStr) throws JsonException
     {
         try
         {
-            return userManagerService.createRelation(userId, rolesStr, getLoginUser());
+            userManagerService.createRelation(userId, rolesStr, getLoginUser());
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             throw new JsonException(e.getMessage(), e);
         }
     }
 
     @GetMapping(value = "/getUserList")
-    public @ResponseBody JsonResult getUserList() throws JsonException
+    public @ResponseBody List<TmUserPO> getUserList() throws JsonException
     {
         try
         {
@@ -202,7 +236,7 @@ public class UserManagerController extends BaseController
     }
 
     @PostMapping(value = "/updatePassword")
-    public @ResponseBody JsonResult updatePassword(Integer userId, String originPwd, String newPwd) throws JsonException
+    public @ResponseBody boolean updatePassword(Integer userId, String originPwd, String newPwd) throws JsonException
     {
         try
         {

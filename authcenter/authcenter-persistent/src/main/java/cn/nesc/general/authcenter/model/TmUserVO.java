@@ -1,11 +1,11 @@
 package cn.nesc.general.authcenter.model;
 
+import cn.nesc.general.common.bean.VO;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class TmUserVO implements Serializable {
+public class TmUserVO implements VO
+{
 
     private Integer userId;
     private String userCode;

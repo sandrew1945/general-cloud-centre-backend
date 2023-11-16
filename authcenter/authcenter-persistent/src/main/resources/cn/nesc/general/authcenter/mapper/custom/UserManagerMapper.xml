@@ -60,7 +60,8 @@
         	AND user_status = #{condition.userStatus}
         </if>
 		AND tu.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
-		GROUP BY user_code,is_delete   </select>
+		GROUP BY user_code,role_code
+	</select>
     
     
     <select id="queryRelationRole" resultType="cn.nesc.general.authcenter.model.TmRolePO" parameterType="int">
