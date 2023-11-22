@@ -26,11 +26,11 @@ public class RoleBean
 
     private String applicationName;
 
-    private Integer createBy;
+    private String createBy;
 
     private Date createDate;
 
-    private Integer updateBy;
+    private String updateBy;
 
     private Date updateDate;
 }

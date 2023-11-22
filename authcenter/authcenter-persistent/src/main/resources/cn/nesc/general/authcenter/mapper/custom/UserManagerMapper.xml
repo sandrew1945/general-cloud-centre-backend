@@ -33,7 +33,8 @@
 				tu.phone,
 				tu.mobile,
 				tu.email,
-				tr.role_code,
+				tu.birthday,
+				group_concat(tr.role_code) AS role_code,
 				group_concat(tr.role_name) AS role_name
 			FROM
 				tm_user tu
@@ -60,7 +61,7 @@
         	AND user_status = #{condition.userStatus}
         </if>
 		AND tu.is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
-		GROUP BY user_code,role_code
+		GROUP BY user_code
 	</select>
     
     

@@ -15,6 +15,8 @@ import cn.nesc.general.common.bean.VO;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @ClassName UserPageQueryVO
  * @Description
@@ -42,6 +44,8 @@ public class UserPageQueryVO implements VO
     private String mobile;
 
     private String email;
+
+    private Date birthday;
 
     private String userStatus;
 }

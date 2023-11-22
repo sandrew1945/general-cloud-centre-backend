@@ -50,7 +50,7 @@
       <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
       <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
     </table>
-    <table schema="" tableName="tr_role_func_front" domainObjectName="TrRoleFuncFrontPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
+    <table schema="" tableName="tr_role_func" domainObjectName="TrRoleFuncPO" enableCountByExample="true" enableSelectByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
       <generatedKey column="id" sqlStatement="JDBC" identity="true" />
       <columnOverride column="create_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
       <columnOverride column="update_date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>

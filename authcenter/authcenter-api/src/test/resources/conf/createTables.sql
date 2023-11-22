@@ -44,23 +44,6 @@ CREATE TABLE `tm_fixcode`
     `update_date` datetime    DEFAULT NULL
 ) ENGINE=InnoDB COMMENT='字典表';
 
-CREATE TABLE `tm_function`
-(
-    `function_id`     int(8) PRIMARY KEY AUTO_INCREMENT,
-    `function_code`   varchar(30) DEFAULT NULL,
-    `function_name`   varchar(50) DEFAULT NULL,
-    `father_func`     int(8) DEFAULT NULL,
-    `function_type`   int(8) DEFAULT NULL COMMENT '类型：菜单、操作',
-    `function_status` int(8) DEFAULT NULL,
-    `access_url`      varchar(50) DEFAULT NULL,
-    `function_order`  int(3) DEFAULT NULL,
-    `icon`            varchar(30) DEFAULT NULL,
-    `is_delete`       int(8) DEFAULT NULL,
-    `create_by`       int(8) DEFAULT NULL,
-    `create_date`     datetime    DEFAULT NULL,
-    `update_by`       int(8) DEFAULT NULL,
-    `update_date`     datetime    DEFAULT NULL
-) ENGINE=InnoDB;
 
 CREATE TABLE `tm_menu`
 (
@@ -134,9 +117,9 @@ CREATE TABLE `tr_role_func`
     `id`          int(8) PRIMARY KEY AUTO_INCREMENT,
     `role_id`     int(8) DEFAULT NULL,
     `menu_id`     int(8) DEFAULT NULL,
-    `create_by`   int(8) DEFAULT NULL,
+    `create_by`   varchar(50) DEFAULT NULL,
     `create_date` datetime DEFAULT NULL,
-    `update_by`   int(8) DEFAULT NULL,
+    `update_by`   varchar(50) DEFAULT NULL,
     `update_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB;
 

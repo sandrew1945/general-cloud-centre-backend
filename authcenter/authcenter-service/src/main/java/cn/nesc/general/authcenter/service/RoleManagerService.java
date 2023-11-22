@@ -6,7 +6,6 @@ import cn.nesc.general.authcenter.model.TmRolePO;
 import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.common.bean.PageResult;
 import cn.nesc.general.core.exception.ServiceException;
-import cn.nesc.general.core.result.JsonResult;
 
 import java.util.List;
 
@@ -44,7 +43,7 @@ public interface RoleManagerService
 	 * @param role 角色
 	 * @param aclUser 登录用户
 	 */
-	JsonResult createRole(TmRolePO role, AclUserBean aclUser) throws ServiceException;
+	boolean createRole(TmRolePO role, AclUserBean aclUser) throws ServiceException;
 	
 	/**
 	 * Function    :根据角色id查询角色信息
@@ -65,7 +64,7 @@ public interface RoleManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult updateRole(TmRolePO role, AclUserBean aclUser) throws ServiceException;
+	boolean updateRole(TmRolePO role, AclUserBean aclUser) throws ServiceException;
 	
 
 	/**
@@ -76,7 +75,7 @@ public interface RoleManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult deleteRole(Integer roleId, AclUserBean aclUser) throws ServiceException;
+	boolean deleteRole(Integer roleId, AclUserBean aclUser) throws ServiceException;
 
 	/**
 	 *  保存角色下的菜单(quasar)
@@ -86,7 +85,7 @@ public interface RoleManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	JsonResult saveSelectedFunc(Integer roleId, List<Integer> functionIds, AclUserBean loginUser) throws ServiceException;
+	boolean saveSelectedFunc(Integer roleId, List<Integer> functionIds, AclUserBean loginUser) throws ServiceException;
 
 	/**
 	 * 	获取已选择菜单
@@ -94,5 +93,7 @@ public interface RoleManagerService
 	 * @return
 	 * @throws ServiceException
      */
-	JsonResult getCheckPermission(Integer roleId) throws ServiceException;
+	List<Integer> getCheckPermission(Integer roleId) throws ServiceException;
+
+	boolean roleValidate(String roleCode) throws ServiceException;
 }

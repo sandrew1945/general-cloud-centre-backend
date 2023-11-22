@@ -33,17 +33,17 @@ package cn.nesc.general.authcenter.service.impl;
 import cn.nesc.general.authcenter.bean.RoleBean;
 import cn.nesc.general.authcenter.mapper.TmMenuPOMapper;
 import cn.nesc.general.authcenter.mapper.TmRolePOMapper;
-import cn.nesc.general.authcenter.mapper.TrRoleFuncFrontPOMapper;
+import cn.nesc.general.authcenter.mapper.TrRoleFuncPOMapper;
 import cn.nesc.general.authcenter.mapper.custom.RoleManagerMapper;
 import cn.nesc.general.authcenter.model.*;
 import cn.nesc.general.authcenter.service.RoleManagerService;
-import cn.nesc.general.common.dictionary.Constants;
-import cn.nesc.general.common.dictionary.Fixcode;
 import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.common.bean.PageResult;
+import cn.nesc.general.common.dictionary.Constants;
+import cn.nesc.general.common.dictionary.Fixcode;
+import cn.nesc.general.common.mybatis.PageQueryBuilder;
 import cn.nesc.general.core.exception.DAOException;
 import cn.nesc.general.core.exception.ServiceException;
-import cn.nesc.general.common.mybatis.PageQueryBuilder;
 import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,10 +71,10 @@ public class RoleManagerServiceImpl implements RoleManagerService
     private RoleManagerMapper roleManagerMapper;
 
     @Resource
-    private TrRoleFuncFrontPOMapper trRoleFuncFrontPOMapper;
+    private TmMenuPOMapper tmMenuPOMapper;
 
     @Resource
-    private TmMenuPOMapper tmMenuPOMapper;
+    private TrRoleFuncPOMapper trRoleFuncPOMapper;
 
 
     @Override
@@ -127,9 +127,8 @@ public class RoleManagerServiceImpl implements RoleManagerService
      * @param aclUser 登录用户
      */
     @Override
-    public JsonResult createRole(TmRolePO role, AclUserBean aclUser) throws ServiceException
+    public boolean createRole(TmRolePO role, AclUserBean aclUser) throws ServiceException
     {
-        JsonResult result = new JsonResult();
         try
         {
             boolean isExits = false;
@@ -146,13 +145,17 @@ public class RoleManagerServiceImpl implements RoleManagerService
                 role.setIsDelete(Constants.IF_TYPE_NO);
                 role.setCreateBy(aclUser.getUserCode());
                 role.setCreateDate(new Date());
-                result.requestSuccess(tmRolePOMapper.insertSelective(role));
+                int count = tmRolePOMapper.insertSelective(role);
+                if (count > 0)
+                {
+                    return true;
+                }
+                return false;
             }
             else
             {
-                result.requestFailure("角色已经存在");
+                throw new ServiceException("角色已经存在");
             }
-            return result;
         }
         catch (Exception e)
         {
@@ -195,15 +198,19 @@ public class RoleManagerServiceImpl implements RoleManagerService
      * @throws ServiceException
      */
     @Override
-    public JsonResult updateRole(TmRolePO role, AclUserBean aclUser) throws ServiceException
+    public boolean updateRole(TmRolePO role, AclUserBean aclUser) throws ServiceException
     {
         JsonResult result = new JsonResult();
         try
         {
             role.setUpdateDate(new Date());
             role.setUpdateBy(aclUser.getUserCode());
-            result.requestSuccess(tmRolePOMapper.updateByPrimaryKeySelective(role));
-            return result;
+            int count = tmRolePOMapper.updateByPrimaryKeySelective(role);
+            if (count > 0)
+            {
+                return true;
+            }
+            return false;
         }
         catch (Exception e)
         {
@@ -222,28 +229,26 @@ public class RoleManagerServiceImpl implements RoleManagerService
      * @throws ServiceException
      */
     @Override
-    public JsonResult deleteRole(Integer roleId, AclUserBean aclUser) throws ServiceException
+    public boolean deleteRole(Integer roleId, AclUserBean aclUser) throws ServiceException
     {
         try
         {
-            JsonResult result = new JsonResult();
-
+            List<TrUserRolePO> userRoles = roleManagerMapper.userRoleByRoleId(roleId);
+            if (userRoles.size() > 0)
+            {
+                throw new ServiceException("该角色已关联用户，无法删除");
+            }
             TmRolePO deleteRole = new TmRolePO();
             deleteRole.setRoleId(roleId);
             deleteRole.setIsDelete(Fixcode.IF_TYPE_YES.getCode());
             deleteRole.setUpdateBy(aclUser.getUserCode());
             deleteRole.setUpdateDate(new Date());
             int count = tmRolePOMapper.updateByPrimaryKeySelective(deleteRole);
-
             if (count > 0)
             {
-                result.requestSuccess(true);
+                return true;
             }
-            else
-            {
-                result.requestFailure("删除角色失败");
-            }
-            return result;
+            return false;
         }
         catch (Exception e)
         {
@@ -262,23 +267,22 @@ public class RoleManagerServiceImpl implements RoleManagerService
      */
 
     @Override
-    public JsonResult saveSelectedFunc(Integer roleId, List<Integer> functionIds, AclUserBean loginUser) throws ServiceException
+    public boolean saveSelectedFunc(Integer roleId, List<Integer> functionIds, AclUserBean loginUser) throws ServiceException
     {
-        JsonResult result = new JsonResult();
         try
         {
             List<Integer> insertedIds = new ArrayList<>();
             // 先清空该角色下全部功能
-            TrRoleFuncFrontPOExample example = new TrRoleFuncFrontPOExample();
-            TrRoleFuncFrontPOExample.Criteria criteria = example.createCriteria();
-            criteria.andRoleIdEqualTo(roleId);
-            trRoleFuncFrontPOMapper.deleteByExample(example);
+//            TrRoleFun example = new TrRoleFuncFrontPOExample();
+//            TrRoleFuncFrontPOExample.Criteria criteria = example.createCriteria();
+//            criteria.andRoleIdEqualTo(roleId);
+//            trRoleFuncFrontPOMapper.deleteByExample(example);
 
             // 重新生成角色功能关系
             functionIds.stream().forEach(functionId -> {
                 createRoleFunction(roleId, functionId, insertedIds, loginUser);
             });
-            return result.requestSuccess();
+            return true;
         }
         catch (Exception e)
         {
@@ -304,12 +308,12 @@ public class RoleManagerServiceImpl implements RoleManagerService
                 createRoleFunction(roleId, menu.getFatherId(), createdFunction, loginUser);
             }
             // 将该节点关联到该角色下
-            TrRoleFuncFrontPO insertRoleFunc = new TrRoleFuncFrontPO();
+            TrRoleFuncPO insertRoleFunc = new TrRoleFuncPO();
             insertRoleFunc.setRoleId(roleId);
             insertRoleFunc.setMenuId(functionId);
             insertRoleFunc.setCreateBy(loginUser.getUserCode());
             insertRoleFunc.setCreateDate(new Date());
-            int count = trRoleFuncFrontPOMapper.insertSelective(insertRoleFunc);
+            int count = trRoleFuncPOMapper.insertSelective(insertRoleFunc);
             createdFunction.add(functionId);
             return count;
         }
@@ -321,25 +325,43 @@ public class RoleManagerServiceImpl implements RoleManagerService
     }
 
     @Override
-    public JsonResult getCheckPermission(Integer roleId) throws ServiceException
+    public List<Integer> getCheckPermission(Integer roleId) throws ServiceException
     {
-        JsonResult result = new JsonResult();
         try
         {
-            TrRoleFuncFrontPOExample example = new TrRoleFuncFrontPOExample();
-            TrRoleFuncFrontPOExample.Criteria criteria = example.createCriteria();
+            TrRoleFuncPOExample example = new TrRoleFuncPOExample();
+            TrRoleFuncPOExample.Criteria criteria = example.createCriteria();
             criteria.andRoleIdEqualTo(roleId);
-            List<TrRoleFuncFrontPO> roleFuncFrontList = trRoleFuncFrontPOMapper.selectByExample(example);
+            List<TrRoleFuncPO> roleFuncFrontList = trRoleFuncPOMapper.selectByExample(example);
             List<Integer> checkedPermission = new ArrayList<>();
             roleFuncFrontList.stream().forEach(el -> {
                 checkedPermission.add(el.getMenuId());
             });
-            return result.requestSuccess(checkedPermission);
+            return checkedPermission;
         }
         catch (Exception e)
         {
             log.error(e.getMessage(), e);
             throw new ServiceException("获取已选菜单失败", e);
+        }
+    }
+
+    @Override
+    public boolean roleValidate(String roleCode) throws ServiceException
+    {
+        try
+        {
+            TmRolePOExample example = new TmRolePOExample();
+            TmRolePOExample.Criteria criteria = example.createCriteria();
+            criteria.andRoleCodeEqualTo(roleCode);
+            criteria.andIsDeleteEqualTo(Constants.IF_TYPE_NO);
+            List<TmRolePO> roleList = tmRolePOMapper.selectByExample(example);
+            return roleList.size() > 0 ? false : true;
+        }
+        catch (Exception e)
+        {
+            log.error(e.getMessage(), e);
+            throw new ServiceException("验证角色是否存在失败", e);
         }
     }
 }

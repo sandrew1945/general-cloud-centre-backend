@@ -30,12 +30,12 @@ import cn.nesc.general.common.bean.PageResult;
 import cn.nesc.general.common.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
-import cn.nesc.general.core.result.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -72,13 +72,12 @@ public class RoleManagerController extends BaseController
 	}
 
 	@GetMapping("getRoleInfoById")
-	public @ResponseBody JsonResult getRoleInfoById(Integer roleId) throws JsonException
+	public @ResponseBody TmRolePO getRoleInfoById(Integer roleId) throws JsonException
 	{
-		JsonResult result = new JsonResult();
 		try
 		{
 			TmRolePO role = roleManagerService.findByroleId(roleId);
-			return result.requestSuccess(role);
+			return role;
 		}
 		catch (ServiceException e)
 		{
@@ -89,7 +88,7 @@ public class RoleManagerController extends BaseController
 
 	@PostMapping(value = "/createRole")
 	public @ResponseBody
-	JsonResult createRole(TmRolePO user) throws JsonException
+	boolean createRole(TmRolePO user) throws JsonException
 	{
 		try
 		{
@@ -104,7 +103,7 @@ public class RoleManagerController extends BaseController
 
 	@PostMapping(value = "/updateRole")
 	public @ResponseBody
-	JsonResult updateRole(TmRolePO role) throws JsonException
+	boolean updateRole(TmRolePO role) throws JsonException
 	{
 		try
 		{
@@ -119,12 +118,11 @@ public class RoleManagerController extends BaseController
 
 	@PostMapping(value = "/deleteRole")
 	public @ResponseBody
-	JsonResult deleteRole(Integer roleId) throws JsonException
+	boolean deleteRole(Integer roleId) throws JsonException
 	{
-		JsonResult result = new JsonResult();
 		try
 		{
-			//删除角色的时候 需要判断 该角色是否分配给其他人 如果未分配咋可以删除 如果已分配 则不可以删除
+			//删除角色的时候 需要判断 该角色是否分配给其他人 如果未分配则可以删除 则不可以删除
 			return roleManagerService.deleteRole(roleId, getLoginUser());
 		}
 		catch (Exception e)
@@ -141,7 +139,7 @@ public class RoleManagerController extends BaseController
 	 * @throws JsonException
 	 */
 	@PostMapping("saveSelectedFunc")
-	public @ResponseBody JsonResult saveSelectedFunc(@RequestBody FunctionsParam parameter) throws JsonException
+	public @ResponseBody boolean saveSelectedFunc(@RequestBody FunctionsParam parameter) throws JsonException
 	{
 		try
 		{
@@ -154,8 +152,15 @@ public class RoleManagerController extends BaseController
 		}
 	}
 
+	/**
+	 * @Author summer
+	 * @Description 查询已选菜单
+	 * @Date 16:43 2023/11/16
+	 * @Param [roleId]
+	 * @return cn.nesc.general.core.result.JsonResult
+	 **/
 	@GetMapping("getCheckedPremission")
-	public @ResponseBody JsonResult getCheckedPremission(Integer roleId) throws JsonException
+	public @ResponseBody List<Integer> getCheckedPremission(Integer roleId) throws JsonException
 	{
 		try
 		{
@@ -165,6 +170,20 @@ public class RoleManagerController extends BaseController
 		{
 			log.error(e.getMessage(), e);
 			throw new JsonException("保存权限失败", e);
+		}
+	}
+
+	@GetMapping("roleValidate")
+	public @ResponseBody boolean roleValidate(String roleCode) throws JsonException
+	{
+		try
+		{
+			return roleManagerService.roleValidate(roleCode);
+		}
+		catch (Exception e)
+		{
+			log.error(e.getMessage(), e);
+			throw new JsonException("角色验证失败", e);
 		}
 	}
 }

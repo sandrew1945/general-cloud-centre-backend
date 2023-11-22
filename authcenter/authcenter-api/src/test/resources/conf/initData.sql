@@ -327,18 +327,13 @@ VALUES (10011001, '1001', '状态', '有效', '-1', '2016-09-02 00:00:00', NULL,
        (20011003, '2001', '员工状态', '退休', '-1', '2023-02-16 14:11:52', NULL, NULL),
        (20011004, '2001', '员工状态', '离岗退养', '-1', '2023-02-16 14:11:52', NULL, NULL);
 
-INSERT INTO `tm_function` (`function_id`, `function_code`, `function_name`, `father_func`, `function_type`,
-                           `function_status`, `access_url`, `function_order`, `icon`, `is_delete`, `create_by`,
-                           `create_date`, `update_by`, `update_date`)
-VALUES (23, '1006', '用户管理', NULL, NULL, 10011001, 'usermanager/usermanagerPre', 7, 'icon-user-following', 10031002,
-        -1, '2016-09-21 15:36:49', NULL, NULL),
-       (24, '1007', '角色管理', NULL, NULL, 10011001, 'rolemanager/rolemanagerPre', 8, 'icon-users', 10031002, -1,
-        '2016-09-21 15:36:49', NULL, NULL);
 
-INSERT INTO `tm_menu` (`menu_id`, `path`, `title`, `icon`, `func_order`, `father_id`, `is_delete`, `create_by`,
-                       `create_date`, `update_by`, `update_date`)
-VALUES (1, '/perm/user/manager', '用户管理', 'app:user2', 1, NULL, 10031002, '-1', '2023-10-30 14:36:52', NULL, NULL),
-       (2, '/perm/role/manager', '角色管理', 'app:role', 2, NULL, 10031002, '-1', '2023-10-30 14:36:52', NULL, NULL);
+INSERT INTO `tm_menu` (`menu_id`, `path`, `title`, `icon`, `func_order`, `father_id`, `is_delete`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
+                       (1, '/perm', '权限管理', 'fingerprint', 1000, NULL, 10031002, '-1', '2020-11-10 14:54:34', '1', '2020-11-11 10:40:53'),
+                       (2, '/perm/user/manager', '用户管理', 'person_add', 1001, 1, 10031002, '-1', '2020-11-10 14:55:23', '1', '2020-11-12 08:51:02'),
+                       (3, '/perm/role/manager', '角色管理', 'people', 1002, 1, 10031002, '-1', '2020-11-10 14:55:23', '1', '2020-11-11 10:40:53'),
+                       (4, '/perm/function/manager', '菜单管理', 'list', 1003, 1, 10031002, '-1', '2020-11-10 15:11:29', '1', '2020-11-11 10:40:53'),
+                       (5, '/index/dashboard', '首页', 'dashboard', 0, NULL, 10031002, '1', '2020-11-11 13:23:42', NULL, NULL);
 
 INSERT INTO `tm_post` (`post_id`, `post_code`, `post_name`, `post_desc`, `dept_id`, `type`, `status`, `is_delete`,
                        `create_by`, `create_date`, `update_by`, `update_date`)
@@ -7908,9 +7903,13 @@ VALUES (3002, '8333', '周静连', 'e10adc3949ba59abbe56e057f20f883e', NULL, NUL
        (3423, '8762', '王帅', 'e10adc3949ba59abbe56e057f20f883e', NULL, NULL, '17390909355', 'wangshuai1@nesc.cn', NULL,
         NULL, NULL, 20011001, 10031002, '2023-02-16 14:47:19', '-1', NULL, NULL);
 
-INSERT INTO `tr_role_func` (`id`, `role_id`, `menu_id`, `create_by`, `create_date`, `update_by`, `update_date`)
-VALUES (23, 1, 1, -1, '2016-09-21 15:39:52', NULL, NULL),
-       (24, 1, 2, -1, '2016-09-21 15:39:52', NULL, NULL);
+
+INSERT INTO `tr_role_func` (`id`, `role_id`, `menu_id`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
+                            (23, 1, 1, '-1', '2016-09-21 15:39:52', NULL, NULL),
+                            (24, 1, 2, '-1', '2016-09-21 15:39:52', NULL, NULL),
+                            (25, 1, 3, '-1', '2023-11-22 14:23:50', NULL, NULL),
+                            (26, 1, 4, '-1', '2023-11-22 14:23:50', NULL, NULL),
+                            (27, 1, 5, '-1', '2023-11-22 14:23:50', NULL, NULL);
 
 INSERT INTO `tr_user_dept` (`id`, `user_id`, `dept_id`, `create_by`, `create_date`, `update_by`, `update_date`)
 VALUES (2, 3, 2, NULL, NULL, NULL, NULL),

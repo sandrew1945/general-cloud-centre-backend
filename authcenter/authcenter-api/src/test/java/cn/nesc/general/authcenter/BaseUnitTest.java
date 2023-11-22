@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * @ClassName BaseUnitTest
@@ -296,7 +297,7 @@ public class BaseUnitTest
      * @Param [path, expectValue]
      * @return org.springframework.test.web.servlet.ResultMatcher
      **/
-    protected ResultMatcher jsonContentOK(String path, String expectedValue)
+    protected ResultMatcher jsonContentOK(String path, Object expectedValue)
     {
         return jsonPath(path).value(expectedValue);
     }
