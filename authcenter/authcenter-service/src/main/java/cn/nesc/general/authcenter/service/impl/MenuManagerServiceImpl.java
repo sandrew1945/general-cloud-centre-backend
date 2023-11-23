@@ -64,7 +64,7 @@ public class MenuManagerServiceImpl implements MenuManagerService
     }
 
     @Override
-    public int updateMenu(TreeNode treeNode, AclUserBean loginUser) throws ServiceException
+    public boolean updateMenu(TreeNode treeNode, AclUserBean loginUser) throws ServiceException
     {
         try
         {
@@ -77,7 +77,12 @@ public class MenuManagerServiceImpl implements MenuManagerService
             updateMenu.setFuncOrder(treeNode.getFuncOrder());
             updateMenu.setUpdateBy(loginUser.getUserCode());
             updateMenu.setUpdateDate(new Date());
-            return tmMenuPOMapper.updateByPrimaryKeySelective(updateMenu);
+            int count = tmMenuPOMapper.updateByPrimaryKeySelective(updateMenu);
+            if (count > 0)
+            {
+                return true;
+            }
+            return false;
         }
         catch (Exception e)
         {
@@ -87,7 +92,7 @@ public class MenuManagerServiceImpl implements MenuManagerService
     }
 
     @Override
-    public int deleteMenuById(Integer functionId, AclUserBean loginUser) throws ServiceException
+    public boolean deleteMenuById(Integer functionId, AclUserBean loginUser) throws ServiceException
     {
         try
         {
@@ -116,8 +121,9 @@ public class MenuManagerServiceImpl implements MenuManagerService
                         log.error(e.getMessage(), e);
                     }
                 });
+                return true;
             }
-            return count;
+            return false;
         }
         catch (Exception e)
         {
@@ -127,10 +133,17 @@ public class MenuManagerServiceImpl implements MenuManagerService
     }
 
     @Override
-    public int createMenu(TreeNode treeNode, Integer fatherId, AclUserBean loginUser) throws ServiceException
+    public boolean createMenu(TreeNode treeNode, Integer fatherId, AclUserBean loginUser) throws ServiceException
     {
         try
         {
+            // 判断父节点是否存在
+
+            TmMenuPO father = tmMenuPOMapper.selectByPrimaryKey(fatherId);
+            if (null == father)
+            {
+                throw new ServiceException("创建系统菜单失败:父节点不存在");
+            }
             TmMenuPO menu = new TmMenuPO();
             menu.setPath(treeNode.getPath());
             menu.setTitle(treeNode.getName());
@@ -140,12 +153,17 @@ public class MenuManagerServiceImpl implements MenuManagerService
             menu.setIsDelete(Fixcode.IF_TYPE_NO.getCode());
             menu.setCreateBy(loginUser.getUserCode());
             menu.setCreateDate(new Date());
-            return tmMenuPOMapper.insertSelective(menu);
+            int count = tmMenuPOMapper.insertSelective(menu);
+            if (count > 0)
+            {
+                return true;
+            }
+            return false;
         }
         catch (Exception e)
         {
             log.error(e.getMessage(), e);
-            throw new ServiceException("创建系统菜单失败", e);
+            throw new ServiceException(e.getMessage(), e);
         }
     }
 }

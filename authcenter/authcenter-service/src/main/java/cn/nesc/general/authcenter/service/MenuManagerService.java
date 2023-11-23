@@ -30,7 +30,7 @@ public interface MenuManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	int updateMenu(TreeNode treeNode, AclUserBean loginUser) throws ServiceException;
+	boolean updateMenu(TreeNode treeNode, AclUserBean loginUser) throws ServiceException;
 
 	/**
 	 *  删除菜单
@@ -39,7 +39,7 @@ public interface MenuManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	int deleteMenuById(Integer functionId, AclUserBean loginUser) throws ServiceException;
+	boolean deleteMenuById(Integer functionId, AclUserBean loginUser) throws ServiceException;
 
 	/**
 	 *  创建菜单
@@ -49,5 +49,5 @@ public interface MenuManagerService
 	 * @return
 	 * @throws ServiceException
 	 */
-	int createMenu(TreeNode treeNode, Integer fatherId, AclUserBean loginUser) throws ServiceException;
+	boolean createMenu(TreeNode treeNode, Integer fatherId, AclUserBean loginUser) throws ServiceException;
 }

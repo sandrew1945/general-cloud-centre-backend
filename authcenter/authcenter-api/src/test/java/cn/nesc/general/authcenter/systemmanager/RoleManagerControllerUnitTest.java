@@ -122,7 +122,7 @@ public class RoleManagerControllerUnitTest extends InitForUnitTest
     }
 
     @Test
-    @DisplayName("验证角色名重复")
+    @DisplayName("验证角色代码重复")
     public void roleValidateControllerTestProcess() throws Exception
     {
         Map<String, String> params = new HashMap<>();
