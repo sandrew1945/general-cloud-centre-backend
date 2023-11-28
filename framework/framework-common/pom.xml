@@ -27,6 +27,10 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.nesc</groupId>
+            <artifactId>common-tool</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

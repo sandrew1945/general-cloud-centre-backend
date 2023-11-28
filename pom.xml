@@ -50,6 +50,7 @@
         <zipkin.version>2.2.2.RELEASE</zipkin.version>
         <swagger.version>2.9.2</swagger.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <common-tool.version>1.0-SNAPSHOT</common-tool.version>
     </properties>
 
     <dependencyManagement>
@@ -265,6 +266,11 @@
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.nesc</groupId>
+                <artifactId>common-tool</artifactId>
+                <version>${common-tool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

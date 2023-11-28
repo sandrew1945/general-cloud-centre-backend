@@ -2,11 +2,12 @@ package cn.nesc.general.authcenter.config;
 
 
 import cn.nesc.general.authcenter.config.shiro.AccountAuthorizationRealm;
+import cn.nesc.general.authcenter.config.shiro.IDAASCredentialsMatcher;
 import cn.nesc.general.authcenter.config.shiro.MyFormAuthenticationFilter;
 import cn.nesc.general.authcenter.config.shiro.separate.DefaultHeaderSessionManager;
-import cn.nesc.general.authcenter.config.shiro.session.RedisSessionDAO;
 import cn.nesc.general.authcenter.config.shiro.separate.MyShiroFilterFactoryBean;
 import cn.nesc.general.authcenter.config.shiro.separate.MyUserFilter;
+import cn.nesc.general.authcenter.config.shiro.session.RedisSessionDAO;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
@@ -66,6 +67,7 @@ public class ShiroConfiguration
         filterChainDefinitionMapping.put("/shutdown", "anon");
         filterChainDefinitionMapping.put("/generate/**", "anon"); // 生成各类
         filterChainDefinitionMapping.put("/validateToken", "anon"); // 验证token
+        filterChainDefinitionMapping.put("/oauth2/sso", "anon"); // oauth2登录
 //        filterChainDefinitionMapping.put("/logout", "logout");
         filterChainDefinitionMapping.put("/login", "authc");
         filterChainDefinitionMapping.put("/**", "user");
@@ -93,12 +95,23 @@ public class ShiroConfiguration
     {
         AccountAuthorizationRealm accountAuthorizationRealm = new AccountAuthorizationRealm();
         //        accountAuthorizationRealm.init();
-        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+//        IDAASCredentialsMatcher matcher = new IDAASCredentialsMatcher();
+//        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+//        matcher.setHashAlgorithmName("MD5");
+//        matcher.setStoredCredentialsHexEncoded(true);
+//        matcher.setHashIterations(1);
+        accountAuthorizationRealm.setCredentialsMatcher(matcher());
+        return accountAuthorizationRealm;
+    }
+
+    @Bean(name="matcher")
+    public HashedCredentialsMatcher matcher()
+    {
+        IDAASCredentialsMatcher matcher = new IDAASCredentialsMatcher();
         matcher.setHashAlgorithmName("MD5");
         matcher.setStoredCredentialsHexEncoded(true);
         matcher.setHashIterations(1);
-        accountAuthorizationRealm.setCredentialsMatcher(matcher);
-        return accountAuthorizationRealm;
+        return matcher;
     }
 
     @Bean

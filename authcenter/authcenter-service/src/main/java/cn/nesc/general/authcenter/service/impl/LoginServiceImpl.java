@@ -50,12 +50,13 @@ import cn.nesc.general.authcenter.service.util.MenuNode;
 import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.common.dictionary.Constants;
 import cn.nesc.general.core.exception.ServiceException;
-import cn.nesc.general.core.shiro.MyUsernamePasswordToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionKey;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -91,18 +92,19 @@ public class LoginServiceImpl implements LoginService
 
 
     @Override
-    public LoginBO login(TmUserPO user) throws ServiceException
+    public LoginBO login(AuthenticationToken token) throws ServiceException
     {
         try
         {
             Subject subject = SecurityUtils.getSubject();
-            MyUsernamePasswordToken token = new MyUsernamePasswordToken(user.getUserCode(), user.getPassword());
+//            MyUsernamePasswordToken token = new MyUsernamePasswordToken(user.getUserCode(), user.getPassword());
             LoginBO result = new LoginBO();
             if (!subject.isAuthenticated())
             {
                 subject.login(token);
-                TmUserPO databaseUser = userManagerService.getUserByCode(user.getUserCode());
-                AclUserBean loginUser = new AclUserBean();
+                AclUserBean loginUser = (AclUserBean) ThreadContext.get("loginUser");
+                log.debug("After login, fetch user from database, usercode ======> " + loginUser.getUserCode());
+                TmUserPO databaseUser = userManagerService.getUserByCode(loginUser.getUserCode());
                 loginUser.setUserId(databaseUser.getUserId());
                 loginUser.setUserCode(databaseUser.getUserCode());
                 loginUser.setUserName(databaseUser.getUserName());

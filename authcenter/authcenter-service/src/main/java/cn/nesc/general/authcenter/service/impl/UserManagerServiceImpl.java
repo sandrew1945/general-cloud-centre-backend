@@ -203,6 +203,10 @@ public class UserManagerServiceImpl implements UserManagerService
             {
                 return users.get(0);
             }
+            else if (null != users && users.size() == 0)
+            {
+                throw new ServiceException("userCode为:" + userCode + "的用户不存在");
+            }
             else
             {
                 throw new TooManyResultsException("userCode为:" + userCode + "的用户重复");

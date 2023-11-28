@@ -4,12 +4,12 @@ package cn.nesc.general.authcenter.controller;
 import cn.nesc.general.authcenter.bean.login.LoginConvertor;
 import cn.nesc.general.authcenter.bean.login.LoginVO;
 import cn.nesc.general.authcenter.bean.usermanager.UserInfoVO;
-import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.LoginService;
 import cn.nesc.general.authcenter.service.util.MenuNode;
 import cn.nesc.general.common.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
+import cn.nesc.general.core.shiro.MyUsernamePasswordToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,10 +41,10 @@ public class LoginController extends BaseController
         log.debug("custom ----------->" + custom);
         try
         {
-            TmUserPO user = new TmUserPO();
-            user.setUserCode(userCode);
-            user.setPassword(password);
-            return loginConvertor.toLoginVO(loginService.login(user));
+            MyUsernamePasswordToken token = new MyUsernamePasswordToken();
+            token.setUsername(userCode);
+            token.setPassword(password.toCharArray());
+            return loginConvertor.toLoginVO(loginService.login(token));
         }
         catch (Exception e)
         {

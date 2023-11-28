@@ -11,7 +11,7 @@
 
 package cn.nesc.general.authcenter;
 
-import cn.nesc.general.common.utils.JsonUtil;
+import cn.nesc.toolkit.common.json.JsonUtil;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +29,6 @@ import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * @ClassName BaseUnitTest

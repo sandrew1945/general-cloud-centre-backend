@@ -11,8 +11,8 @@
 
 package cn.nesc.general.gateway.filter;
 
-import cn.nesc.general.common.utils.JsonUtil;
 import cn.nesc.general.core.result.JsonResult;
+import cn.nesc.toolkit.common.json.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.CharStreams;
 import com.netflix.zuul.ZuulFilter;
@@ -78,7 +78,11 @@ public class PackageFilter extends ZuulFilter
     {
         // response的content-type如果为application/octet-stream则不拦截
         RequestContext ctx = RequestContext.getCurrentContext();
-        if (ctx.getOriginResponseHeaders().stream().filter(entity -> "Content-Type".equalsIgnoreCase(entity.first())).anyMatch(entity -> entity.second().startsWith("application/octet-stream")))
+        if (302 == ctx.getResponse().getStatus())
+        {
+            return false;
+        }
+        else if (ctx.getOriginResponseHeaders().stream().filter(entity -> "Content-Type".equalsIgnoreCase(entity.first())).anyMatch(entity -> entity.second().startsWith("application/octet-stream")))
         {
             return false;
         }
@@ -95,6 +99,7 @@ public class PackageFilter extends ZuulFilter
     {
         logger.debug("package the result ....");
         RequestContext ctx = RequestContext.getCurrentContext();
+        logger.debug("Current requestURI is:" + ctx.getRequest().getRequestURI());
         try (final InputStream responseDataStream = ctx.getResponseDataStream())
         {
             if (ctx.getThrowable() != null)
@@ -161,12 +166,19 @@ public class PackageFilter extends ZuulFilter
                 else
                 {
                     // 请求异常
-                    JsonNode node = JsonUtil.string2JsonObject(responseData);
-                    // 变成JsonResult格式
-                    JsonResult result = new JsonResult();
-                    result.requestFailure(node.get("message").asText("Internal Server Error"));
-                    ctx.setResponseStatusCode(OK.value());
-                    ctx.setResponseBody(JsonUtil.javaObject2String(result));
+                    if (JsonUtil.validateJsonStr(responseData))
+                    {
+                        // 变成JsonResult格式
+                        JsonNode node = JsonUtil.string2JsonObject(responseData);
+                        JsonResult result = new JsonResult();
+                        result.requestFailure(node.get("message").asText("Internal Server Error"));
+                        ctx.setResponseStatusCode(OK.value());
+                        ctx.setResponseBody(JsonUtil.javaObject2String(result));
+                    }
+                    else
+                    {
+                        ctx.setResponseBody(responseData);
+                    }
                 }
             }
         }

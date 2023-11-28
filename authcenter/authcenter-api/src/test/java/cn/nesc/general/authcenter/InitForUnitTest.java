@@ -12,8 +12,8 @@
 package cn.nesc.general.authcenter;
 
 import cn.nesc.general.authcenter.bean.login.LoginBO;
-import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.LoginService;
+import cn.nesc.general.core.shiro.MyUsernamePasswordToken;
 import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -24,7 +24,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import javax.annotation.Resource;
-
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.notNullValue;
@@ -53,10 +52,13 @@ public class InitForUnitTest extends BaseUnitTest
     @DisplayName("初始化")
     public void initLoginTestProcess() throws Exception
     {
-        TmUserPO user = new TmUserPO();
-        user.setUserCode("admin");
-        user.setPassword("123456");
-        LoginBO loginBO = loginService.login(user);
+//        TmUserPO user = new TmUserPO();
+//        user.setUserCode("admin");
+//        user.setPassword("123456");
+        MyUsernamePasswordToken usernamePasswordToken = new MyUsernamePasswordToken();
+        usernamePasswordToken.setUsername("admin");
+        usernamePasswordToken.setPassword("123456".toCharArray());
+        LoginBO loginBO = loginService.login(usernamePasswordToken);
         System.out.println("init for token =========> " + loginBO.getToken());
         assertThat(loginBO.getToken(), notNullValue());
         token = loginBO.getToken();

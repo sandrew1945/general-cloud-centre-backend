@@ -3,10 +3,10 @@ package cn.nesc.general.authcenter.service;
 
 import cn.nesc.general.authcenter.bean.login.LoginBO;
 import cn.nesc.general.authcenter.bean.usermanager.UserInfoVO;
-import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.util.MenuNode;
 import cn.nesc.general.common.bean.AclUserBean;
 import cn.nesc.general.core.exception.ServiceException;
+import org.apache.shiro.authc.AuthenticationToken;
 
 import java.util.List;
 
@@ -22,11 +22,11 @@ public interface LoginService
 
 	/**
 	 *  登录
-	 * @param user
+	 * @param token
 	 * @return
 	 * @throws ServiceException
 	 */
-	LoginBO login(TmUserPO user) throws ServiceException;
+	LoginBO login(AuthenticationToken token) throws ServiceException;
 
 	/**
 	 *  获取用户信息
