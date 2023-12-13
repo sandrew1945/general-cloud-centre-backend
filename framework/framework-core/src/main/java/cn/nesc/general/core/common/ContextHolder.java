@@ -1,14 +1,3 @@
-/**
- * Copyright (C), 2015-2023, 东北证券股份有限公司
- * FileName: ContextHolder
- * Author:   summer
- * Date:     2023/3/13 10:57
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- **/
-
 package cn.nesc.general.core.common;
 
 import org.apache.commons.lang3.StringUtils;

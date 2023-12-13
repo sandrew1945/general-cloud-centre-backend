@@ -1,14 +1,3 @@
-/**
- * Copyright (C), 2015-2023, 东北证券股份有限公司
- * FileName: LoginControllerUnitTest
- * Author:   summer
- * Date:     2023/11/1 10:54
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- **/
-
 package cn.nesc.general.authcenter.login;
 
 import cn.nesc.general.authcenter.InitForUnitTest;

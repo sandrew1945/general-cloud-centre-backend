@@ -44,7 +44,7 @@ public class OAuth2LoginController extends BaseController
             Cookie coocie= new Cookie("quasar_template_token", loginBO.getToken());
             coocie.setPath("/");
             res.addCookie(coocie);
-            String redirectURL = "http://10.6.33.61:83/#" + state;
+            String redirectURL = "http://10.6.33.61:81/#" + state;
             res.sendRedirect(redirectURL);
         }
         catch (Exception e)

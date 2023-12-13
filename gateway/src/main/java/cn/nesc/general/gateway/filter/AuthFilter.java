@@ -1,14 +1,3 @@
-/**
- * Copyright (C), 2015-2022, 东北证券股份有限公司
- * FileName: AuthFilter
- * Author:   summer
- * Date:     2022/2/9 14:09
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- **/
-
 package cn.nesc.general.gateway.filter;
 
 import cn.nesc.general.common.nosql.RedisUtil;

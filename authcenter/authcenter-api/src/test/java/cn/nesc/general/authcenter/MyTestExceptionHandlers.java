@@ -1,14 +1,3 @@
-/**
- * Copyright (C), 2015-2023, 东北证券股份有限公司
- * FileName: MyTestExceptionHandlers
- * Author:   summer
- * Date:     2023/11/7 16:43
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- **/
-
 package cn.nesc.general.authcenter;
 
 import cn.nesc.general.core.exception.BaseException;
