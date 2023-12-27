@@ -2,7 +2,7 @@ package cn.nesc.general.authcenter.service;
 
 
 import cn.nesc.general.authcenter.service.util.TreeNode;
-import cn.nesc.general.common.bean.AclUserBean;
+import cn.nesc.general.core.bean.AclUserBean;
 import cn.nesc.general.core.exception.ServiceException;
 
 import java.util.List;

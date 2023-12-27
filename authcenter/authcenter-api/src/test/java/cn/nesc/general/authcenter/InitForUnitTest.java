@@ -3,7 +3,7 @@ package cn.nesc.general.authcenter;
 import cn.nesc.general.authcenter.bean.login.LoginBO;
 import cn.nesc.general.authcenter.service.LoginService;
 import cn.nesc.general.core.shiro.MyUsernamePasswordToken;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,8 +15,9 @@ import org.springframework.util.MultiValueMap;
 import javax.annotation.Resource;
 import java.util.Arrays;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+
 
 /**
  * @ClassName InitForUnitTest
@@ -36,7 +37,7 @@ public class InitForUnitTest extends BaseUnitTest
     @Resource
     private LoginService loginService;
 
-    @Before
+    @BeforeEach
     @Order(1)
     @DisplayName("初始化")
     public void initLoginTestProcess() throws Exception

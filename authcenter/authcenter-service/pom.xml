@@ -15,6 +15,10 @@
             <artifactId>authcenter-persistent</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.nesc</groupId>
+            <artifactId>common-tool</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>

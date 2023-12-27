@@ -1,6 +1,6 @@
 package cn.nesc.general.authcenter.model;
 
-import cn.nesc.general.common.bean.VO;
+import cn.nesc.general.core.bean.VO;
 import lombok.Data;
 
 @Data

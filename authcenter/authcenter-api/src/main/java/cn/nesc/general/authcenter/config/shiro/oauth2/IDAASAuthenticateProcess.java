@@ -1,6 +1,6 @@
 package cn.nesc.general.authcenter.config.shiro.oauth2;
 
-import cn.nesc.general.common.utils.ObjectUtils;
+import cn.nesc.general.core.util.ObjectUtils;
 import cn.nesc.toolkit.common.exception.HttpClientException;
 import cn.nesc.toolkit.common.httpclient.HttpClientUtil;
 import cn.nesc.toolkit.common.httpclient.HttpResponse;

@@ -25,7 +25,7 @@
 
 package cn.nesc.general.authcenter.config.shiro.session;
 
-import cn.nesc.general.common.nosql.RedisUtil;
+import cn.nesc.general.core.nosql.RedisUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.ValidatingSession;

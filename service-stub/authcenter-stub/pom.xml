@@ -18,6 +18,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>cn.nesc</groupId>
+            <artifactId>authcenter-persistent</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- springboot 配置 start -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -25,7 +25,6 @@ package cn.nesc.general.authcenter.controller;
 
 import cn.nesc.general.authcenter.service.MenuManagerService;
 import cn.nesc.general.authcenter.service.util.TreeNode;
-import cn.nesc.general.common.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;

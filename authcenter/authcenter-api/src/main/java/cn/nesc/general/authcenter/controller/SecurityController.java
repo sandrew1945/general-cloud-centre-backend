@@ -1,8 +1,7 @@
 package cn.nesc.general.authcenter.controller;
 
 
-import cn.nesc.general.common.bean.AclUserBean;
-import cn.nesc.general.common.controller.BaseController;
+import cn.nesc.general.core.bean.AclUserBean;
 import cn.nesc.general.core.exception.JsonException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

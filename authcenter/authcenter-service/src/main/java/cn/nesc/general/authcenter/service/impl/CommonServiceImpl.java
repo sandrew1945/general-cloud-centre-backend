@@ -2,7 +2,7 @@ package cn.nesc.general.authcenter.service.impl;
 
 
 import cn.nesc.general.authcenter.service.CommonService;
-import cn.nesc.general.common.utils.LocalFileUtil;
+import cn.nesc.general.core.util.LocalFileUtil;
 import cn.nesc.general.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

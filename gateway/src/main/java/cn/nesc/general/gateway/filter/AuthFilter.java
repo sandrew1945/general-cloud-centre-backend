@@ -1,6 +1,6 @@
 package cn.nesc.general.gateway.filter;
 
-import cn.nesc.general.common.nosql.RedisUtil;
+import cn.nesc.general.core.nosql.RedisUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;

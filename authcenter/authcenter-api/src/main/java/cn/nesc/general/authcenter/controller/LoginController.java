@@ -6,7 +6,6 @@ import cn.nesc.general.authcenter.bean.login.LoginVO;
 import cn.nesc.general.authcenter.bean.usermanager.UserInfoVO;
 import cn.nesc.general.authcenter.service.LoginService;
 import cn.nesc.general.authcenter.service.util.MenuNode;
-import cn.nesc.general.common.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.shiro.MyUsernamePasswordToken;

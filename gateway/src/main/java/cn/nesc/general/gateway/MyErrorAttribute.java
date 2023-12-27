@@ -1,5 +1,6 @@
 package cn.nesc.general.gateway;
 
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
@@ -17,11 +18,10 @@ import java.util.Map;
 @Component
 public class MyErrorAttribute extends DefaultErrorAttributes
 {
-
     @Override
-    public Map<String, Object> getErrorAttributes(WebRequest webRequest, boolean includeStackTrace)
+    public Map<String, Object> getErrorAttributes(WebRequest webRequest, ErrorAttributeOptions options)
     {
-        Map<String, Object> result = super.getErrorAttributes(webRequest, includeStackTrace);
+        Map<String, Object> result = super.getErrorAttributes(webRequest, options);
         // 自定义限流的错误消息
         if (!result.get("status").equals(429))
         {

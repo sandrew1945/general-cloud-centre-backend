@@ -2,7 +2,7 @@ package cn.nesc.general.authcenter.controller;
 
 
 import cn.nesc.general.authcenter.service.CommonService;
-import cn.nesc.general.common.captcha.RandCodeImageUtils;
+import cn.nesc.general.core.captcha.RandCodeImageUtils;
 import cn.nesc.general.core.exception.ActionException;
 import cn.nesc.general.core.exception.JsonException;
 import lombok.extern.slf4j.Slf4j;

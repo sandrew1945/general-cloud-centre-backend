@@ -13,7 +13,7 @@
 
 	<typeAliases>
 		<typeAlias alias="hashMap" type="java.util.HashMap" />
-		<typeAlias alias="pager" type="cn.nesc.general.common.mybatis.Pager" />
+		<typeAlias alias="pager" type="cn.nesc.general.core.mybatis.Pager" />
 	</typeAliases>
 
 </configuration>

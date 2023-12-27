@@ -3,8 +3,8 @@ package cn.nesc.general.authcenter.mapper.custom;
 
 import cn.nesc.general.authcenter.model.TmRolePO;
 import cn.nesc.general.authcenter.model.TmUserPO;
-import cn.nesc.general.common.bean.AclUserBean;
-import cn.nesc.general.common.mybatis.Pager;
+import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.mybatis.Pager;
 
 import java.util.List;
 import java.util.Map;

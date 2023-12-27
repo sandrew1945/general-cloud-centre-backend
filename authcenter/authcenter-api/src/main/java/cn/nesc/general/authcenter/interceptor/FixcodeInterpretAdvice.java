@@ -1,9 +1,9 @@
 package cn.nesc.general.authcenter.interceptor;
 
 
-import cn.nesc.general.common.bean.PageResult;
-import cn.nesc.general.common.bean.VO;
-import cn.nesc.general.common.utils.MagicOOO;
+import cn.nesc.general.core.bean.PageResult;
+import cn.nesc.general.core.bean.VO;
+import cn.nesc.general.core.util.MagicOOO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.aspectj.lang.JoinPoint;

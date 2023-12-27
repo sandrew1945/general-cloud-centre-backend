@@ -1,8 +1,8 @@
 package cn.nesc.general.authcenter.bean.usermanager;
 
 import cn.nesc.general.authcenter.model.TmRoleVO;
-import cn.nesc.general.common.bean.VO;
-import cn.nesc.general.common.dictionary.Fixcode;
+import cn.nesc.general.core.bean.VO;
+import cn.nesc.general.authcenter.dictionary.Fixcode;
 import cn.nesc.general.core.annotation.EnumHandler;
 import lombok.Data;
 

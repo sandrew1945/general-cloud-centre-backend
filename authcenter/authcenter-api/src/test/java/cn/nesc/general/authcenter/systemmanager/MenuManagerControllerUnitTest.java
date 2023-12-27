@@ -2,8 +2,8 @@ package cn.nesc.general.authcenter.systemmanager;
 
 import cn.nesc.general.authcenter.InitForUnitTest;
 import cn.nesc.general.core.exception.JsonException;
-import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;

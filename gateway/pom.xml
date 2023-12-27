@@ -12,14 +12,9 @@
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>cn.nesc</groupId>-->
-<!--            <artifactId>authcenter-stub</artifactId>-->
-<!--            <version>${project.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>cn.nesc</groupId>
-            <artifactId>framework-common</artifactId>
+            <artifactId>framework-core</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
@@ -38,15 +33,12 @@
                     <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-starter-openfeign</artifactId>
                 </exclusion>
-<!--                <exclusion>-->
-<!--                    <groupId>org.apache.shiro</groupId>-->
-<!--                    <artifactId>shiro-spring</artifactId>-->
-<!--                </exclusion>-->
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+            <version>2.2.10.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -64,6 +56,10 @@
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.nesc</groupId>
+            <artifactId>common-tool</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -71,6 +67,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.4.13</version>
             </plugin>
         </plugins>
     </build>

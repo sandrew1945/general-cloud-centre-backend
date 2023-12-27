@@ -4,8 +4,8 @@ import cn.nesc.general.authcenter.bean.RoleBean;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerDTO;
 import cn.nesc.general.authcenter.model.TmUserPO;
-import cn.nesc.general.common.bean.AclUserBean;
-import cn.nesc.general.common.bean.PageResult;
+import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.bean.PageResult;
 import cn.nesc.general.core.exception.ServiceException;
 import org.springframework.web.multipart.MultipartFile;
 

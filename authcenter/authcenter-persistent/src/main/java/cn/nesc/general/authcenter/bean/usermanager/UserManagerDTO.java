@@ -1,6 +1,6 @@
 package cn.nesc.general.authcenter.bean.usermanager;
 
-import cn.nesc.general.common.bean.DTO;
+import cn.nesc.general.core.bean.DTO;
 import lombok.Data;
 
 import java.util.Date;

@@ -37,12 +37,12 @@ import cn.nesc.general.authcenter.mapper.TrUserRolePOMapper;
 import cn.nesc.general.authcenter.mapper.custom.UserManagerMapper;
 import cn.nesc.general.authcenter.model.*;
 import cn.nesc.general.authcenter.service.UserManagerService;
-import cn.nesc.general.common.bean.AclUserBean;
-import cn.nesc.general.common.bean.PageResult;
-import cn.nesc.general.common.dictionary.Fixcode;
-import cn.nesc.general.common.encrypt.MD5Encrypt;
-import cn.nesc.general.common.mybatis.PageQueryBuilder;
-import cn.nesc.general.common.utils.MagicOOO;
+import cn.nesc.general.core.bean.AclUserBean;
+import cn.nesc.general.core.bean.PageResult;
+import cn.nesc.general.authcenter.dictionary.Fixcode;
+import cn.nesc.general.core.encrypt.MD5Encrypt;
+import cn.nesc.general.core.mybatis.PageQueryBuilder;
+import cn.nesc.general.core.util.MagicOOO;
 import cn.nesc.general.core.exception.ServiceException;
 import cn.nesc.general.core.exception.TooManyResultsException;
 import lombok.extern.slf4j.Slf4j;
@@ -170,6 +170,7 @@ public class UserManagerServiceImpl implements UserManagerService
         try
         {
             log.debug("缓存中不存在用户信息,读取数据库...");
+//            System.out.println(1/0);
             TmUserPO tmUserPO = tmUserPOMapper.selectByPrimaryKey(userId);
             return userManagerConvertor.toUserManagerBO(tmUserPO);
         }

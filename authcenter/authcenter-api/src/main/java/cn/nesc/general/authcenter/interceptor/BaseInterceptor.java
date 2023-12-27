@@ -1,10 +1,10 @@
 package cn.nesc.general.authcenter.interceptor;
 
-import cn.nesc.general.core.common.Reflections;
-import cn.nesc.general.common.mybatis.Dialect;
-import cn.nesc.general.common.mybatis.Pager;
-import cn.nesc.general.common.mybatis.dialect.MySQLDialect;
-import cn.nesc.general.common.mybatis.dialect.OracleDialect;
+import cn.nesc.general.core.util.Reflections;
+import cn.nesc.general.core.mybatis.Dialect;
+import cn.nesc.general.core.mybatis.Pager;
+import cn.nesc.general.core.mybatis.dialect.MySQLDialect;
+import cn.nesc.general.core.mybatis.dialect.OracleDialect;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.plugin.Interceptor;

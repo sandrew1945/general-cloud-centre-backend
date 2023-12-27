@@ -33,7 +33,7 @@
         <include refid="Base_Column_List" />
         from tm_role
         where 1 = 1
-        and is_delete = ${@cn.nesc.general.common.dictionary.Constants@IF_TYPE_NO}
+        and is_delete = ${@cn.nesc.general.authcenter.dictionary.Fixcode@IF_TYPE_NO.getCode()}
         <if test="condition.roleCode != '' and condition.roleCode != null">
             and role_code like CONCAT('%',#{condition.roleCode},'%')
         </if>

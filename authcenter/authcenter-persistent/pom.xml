@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.nesc</groupId>
-            <artifactId>framework-common</artifactId>
+            <artifactId>framework-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -2,9 +2,9 @@ package cn.nesc.general.authcenter.systemmanager;
 
 import cn.nesc.general.authcenter.InitForUnitTest;
 import cn.nesc.general.authcenter.bean.FunctionsParam;
-import cn.nesc.general.common.dictionary.Constants;
-import org.junit.Test;
+import cn.nesc.general.authcenter.dictionary.Constants;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 

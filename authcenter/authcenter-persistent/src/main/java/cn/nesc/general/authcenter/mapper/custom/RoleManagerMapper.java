@@ -3,7 +3,7 @@ package cn.nesc.general.authcenter.mapper.custom;
 
 import cn.nesc.general.authcenter.bean.RoleBean;
 import cn.nesc.general.authcenter.model.TrUserRolePO;
-import cn.nesc.general.common.mybatis.Pager;
+import cn.nesc.general.core.mybatis.Pager;
 
 import java.util.List;
 

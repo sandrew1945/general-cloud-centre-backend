@@ -1,6 +1,6 @@
 package cn.nesc.general.authcenter.bean.usermanager;
 
-import cn.nesc.general.common.bean.VO;
+import cn.nesc.general.core.bean.VO;
 import lombok.Builder;
 import lombok.Data;
 

@@ -5,7 +5,6 @@ import cn.nesc.general.authcenter.bean.login.LoginBO;
 import cn.nesc.general.authcenter.bean.login.LoginConvertor;
 import cn.nesc.general.authcenter.config.shiro.oauth2.OAuth2Token;
 import cn.nesc.general.authcenter.service.LoginService;
-import cn.nesc.general.common.controller.BaseController;
 import cn.nesc.general.core.exception.JsonException;
 import cn.nesc.general.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;

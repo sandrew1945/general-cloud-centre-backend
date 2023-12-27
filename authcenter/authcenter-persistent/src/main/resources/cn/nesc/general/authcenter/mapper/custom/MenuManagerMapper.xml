@@ -34,7 +34,7 @@
         select
         <include refid="Base_Column_List" />
         FROM tm_menu
-        WHERE is_delete = ${@cn.nesc.general.common.dictionary.Fixcode@IF_TYPE_NO.getCode()}
+        WHERE is_delete = ${@cn.nesc.general.authcenter.dictionary.Fixcode@IF_TYPE_NO.getCode()}
         ORDER BY func_order asc
     </select>
     

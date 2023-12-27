@@ -5,7 +5,7 @@ import cn.nesc.general.authcenter.config.shiro.oauth2.IDAASUserInfo;
 import cn.nesc.general.authcenter.config.shiro.oauth2.OAuth2Token;
 import cn.nesc.general.authcenter.model.TmUserPO;
 import cn.nesc.general.authcenter.service.UserManagerService;
-import cn.nesc.general.common.bean.AclUserBean;
+import cn.nesc.general.core.bean.AclUserBean;
 import cn.nesc.general.core.shiro.Principal;
 import cn.nesc.toolkit.common.httpclient.HttpClientUtil;
 import cn.nesc.toolkit.common.httpclient.HttpResponse;

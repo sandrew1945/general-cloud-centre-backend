@@ -2,7 +2,7 @@ package cn.nesc.general.authcenter.bean.login;
 
 import cn.nesc.general.authcenter.bean.usermanager.UserInfoVO;
 import cn.nesc.general.authcenter.bean.usermanager.UserManagerBO;
-import cn.nesc.general.common.bean.AclUserBean;
+import cn.nesc.general.core.bean.AclUserBean;
 import org.mapstruct.Mapper;
 
 /**

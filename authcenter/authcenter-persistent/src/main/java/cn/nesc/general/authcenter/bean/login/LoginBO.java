@@ -1,6 +1,6 @@
 package cn.nesc.general.authcenter.bean.login;
 
-import cn.nesc.general.common.bean.BO;
+import cn.nesc.general.core.bean.BO;
 import lombok.Data;
 
 /**

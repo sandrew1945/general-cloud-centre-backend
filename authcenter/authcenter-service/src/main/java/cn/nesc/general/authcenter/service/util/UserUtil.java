@@ -25,7 +25,7 @@ package cn.nesc.general.authcenter.service.util;
 
 
 import cn.nesc.general.authcenter.model.TmUserPO;
-import cn.nesc.general.common.bean.AclUserBean;
+import cn.nesc.general.core.bean.AclUserBean;
 
 /**
  * Function    : 针对用户新的的工具类，适用于TmUserPO及ACLUserBean
