@@ -44,7 +44,7 @@ public class FeignErrorDecoder implements ErrorDecoder
             JsonNode responseNode = JsonUtil.string2JsonObject(responseData);
             if (null != responseNode && responseNode.get("status").asInt(0) != HttpStatus.OK.value())
             {
-                return new FeignException("Invoke " + methodKey + " error, reason :" + responseNode.get("message").asText("Internal Server Error"));
+                return new FeignException("Invoke " + methodKey + " error, reason :" + responseNode.get("error").asText("Internal Server Error"));
             }
             return new FeignException("Remote service invoke failure");
         }

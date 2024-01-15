@@ -70,6 +70,7 @@ public class ShiroConfiguration
         filterChainDefinitionMapping.put("/oauth2/sso", "anon"); // oauth2登录
 //        filterChainDefinitionMapping.put("/logout", "logout");
         filterChainDefinitionMapping.put("/login", "authc");
+
         filterChainDefinitionMapping.put("/**", "user");
 
         shiroFilter.setFilterChainDefinitionMap(filterChainDefinitionMapping);

@@ -11,6 +11,7 @@
         <module>service-stub</module>
         <module>authcenter</module>
         <module>framework</module>
+        <module>passage</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -18,7 +19,7 @@
         <revision>1.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-cloud.version>2020.0.6</spring-cloud.version>
-        <spring-boot.version>2.4.13</spring-boot.version>
+        <spring-boot.version>2.5.15</spring-boot.version>
         <eureka.version>2.2.3.RELEASE</eureka.version>
         <openfeign.version>2.2.3.RELEASE</openfeign.version>
         <mysql.connector.version>8.0.20</mysql.connector.version>

@@ -170,7 +170,6 @@ public class UserManagerServiceImpl implements UserManagerService
         try
         {
             log.debug("缓存中不存在用户信息,读取数据库...");
-//            System.out.println(1/0);
             TmUserPO tmUserPO = tmUserPOMapper.selectByPrimaryKey(userId);
             return userManagerConvertor.toUserManagerBO(tmUserPO);
         }
