@@ -24,6 +24,13 @@
             <artifactId>framework-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 使用filebeat收集日志时打开
+        <dependency>
+            <groupId>co.elastic.logging</groupId>
+            <artifactId>logback-ecs-encoder</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+        -->
     </dependencies>
 
     <build>

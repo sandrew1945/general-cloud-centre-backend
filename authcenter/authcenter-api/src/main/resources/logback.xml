@@ -5,6 +5,11 @@
     <property name="LOG_PATH" value="./logs/authcenter"/>
     <property name="MAX_HISTORY" value="10"/>
     <property name="SIZE_CAP" value="10MB"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+    <include resource="co/elastic/logging/logback/boot/ecs-console-appender.xml" />
+    <include resource="co/elastic/logging/logback/boot/ecs-file-appender.xml" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -19,6 +24,14 @@
             <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [${applicationName},%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-B3-ParentSpanId},%X{X-Span-Export}] [%thread] %-5level %logger{36}.%M - %msg%n</Pattern>
             <charset>UTF-8</charset>
         </encoder>
+        <!-- 使用filebeat收集日志
+        <encoder class="co.elastic.logging.logback.EcsEncoder">
+            <serviceName>authcenter</serviceName>
+            <serviceVersion>[%thread]</serviceVersion>
+            <serviceEnvironment>dev</serviceEnvironment>
+            <serviceNodeName>authcenter-node</serviceNodeName>
+        </encoder>
+        -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/archived/authcenter_%d{dd-MM-yyyy}.log</fileNamePattern>
             <maxHistory>${MAX_HISTORY}</maxHistory>
@@ -32,18 +45,18 @@
     </root>
     <logger name="cn.nesc.general" additivity="false" level="debug">
         <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="SAVE-TO-FILE" />-->
+        <appender-ref ref="SAVE-TO-FILE" />
     </logger>
     <logger name="org.springframework" additivity="false" level="info">
         <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="SAVE-TO-FILE" />-->
+        <appender-ref ref="SAVE-TO-FILE" />
     </logger>
     <logger name="java.sql.ResultSet" additivity="false" level="info">
         <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="SAVE-TO-FILE" />-->
+        <appender-ref ref="SAVE-TO-FILE" />
     </logger>
     <logger name="org.apache.shiro" additivity="false" level="info">
         <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="SAVE-TO-FILE" />-->
+        <appender-ref ref="SAVE-TO-FILE" />
     </logger>
 </configuration>
