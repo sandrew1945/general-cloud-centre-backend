@@ -2,7 +2,7 @@
 <configuration>
 
     <springProperty scope="context" name="applicationName" source="spring.application.name" />
-    <property name="LOG_PATH" value="./logs/authcenter"/>
+    <springProperty scope="LOG_PATH" name="applicationName" source="logging.file.path" />
     <property name="MAX_HISTORY" value="10"/>
     <property name="SIZE_CAP" value="10MB"/>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
