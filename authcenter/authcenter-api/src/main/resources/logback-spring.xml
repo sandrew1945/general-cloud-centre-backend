@@ -59,4 +59,8 @@
         <appender-ref ref="STDOUT" />
         <appender-ref ref="SAVE-TO-FILE" />
     </logger>
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" additivity="false" level="debug">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="SAVE-TO-FILE" />
+    </logger>
 </configuration>
